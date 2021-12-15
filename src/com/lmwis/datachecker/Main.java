@@ -1,4 +1,4 @@
-package com.lmwis.data.checker;
+package com.lmwis.datachecker;
 
 /**
  * @Description: TODO
