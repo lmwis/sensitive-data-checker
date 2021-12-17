@@ -7,7 +7,8 @@ import org.jnativehook.keyboard.NativeKeyListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import java.sql.Date;
+
 
 /**
  * @Description: TODO
@@ -31,8 +32,8 @@ public class MyGlobalKeyListener implements NativeKeyListener {
         keyboardRecord.setKeyCode(nativeKeyEvent.getKeyCode());
         keyboardRecord.setPcType(System.getProperty("os.name"));
         keyboardRecord.setAction(1);
-        keyboardRecord.setGmtCreate(new Date());
-        keyboardRecord.setGmtModified(new Date());
+        keyboardRecord.setGmtCreate(new Date(new java.util.Date().getTime()));
+        keyboardRecord.setGmtModified(new Date(new java.util.Date().getTime()));
         keyboardRecordService.insertRecordByTemp(keyboardRecord);
     }
 
@@ -42,8 +43,8 @@ public class MyGlobalKeyListener implements NativeKeyListener {
         keyboardRecord.setKeyCode(nativeKeyEvent.getKeyCode());
         keyboardRecord.setPcType(System.getProperty("os.name"));
         keyboardRecord.setAction(2);
-        keyboardRecord.setGmtCreate(new Date());
-        keyboardRecord.setGmtModified(new Date());
+        keyboardRecord.setGmtCreate(new Date(new java.util.Date().getTime()));
+        keyboardRecord.setGmtModified(new Date(new java.util.Date().getTime()));
         keyboardRecordService.insertRecordByTemp(keyboardRecord);
 
     }
