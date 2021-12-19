@@ -3,6 +3,7 @@ package com.lmwis.datachecker;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * @Description: TODO
@@ -12,6 +13,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 @MapperScan("com.lmwis.datachecker.mapper")
+@EnableScheduling
 public class DataCollectorApplication {
     public static void main(String[] args) {
         SpringApplication.run(DataCollectorApplication.class,args);
