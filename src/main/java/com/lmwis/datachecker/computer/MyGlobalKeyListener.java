@@ -2,6 +2,7 @@ package com.lmwis.datachecker.computer;
 
 import com.lmwis.datachecker.mapper.KeyboardRecord;
 import com.lmwis.datachecker.service.KeyboardRecordService;
+import lombok.extern.slf4j.Slf4j;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,9 @@ import java.sql.Date;
  * @Version: 1.0
  */
 @Component
+@Slf4j
 public class MyGlobalKeyListener implements NativeKeyListener {
+
     final KeyboardRecordService keyboardRecordService;
 
     public MyGlobalKeyListener(KeyboardRecordService keyboardRecordService) {
@@ -25,8 +28,7 @@ public class MyGlobalKeyListener implements NativeKeyListener {
     }
 
     public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
-        System.out.println("Key typed: "+ NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode()));
-
+        log.info("Key typed: "+ NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode()));
         KeyboardRecord keyboardRecord = new KeyboardRecord();
         keyboardRecord.setKeyText(NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode()));
         keyboardRecord.setKeyCode(nativeKeyEvent.getKeyCode());

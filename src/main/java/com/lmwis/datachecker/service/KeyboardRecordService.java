@@ -14,5 +14,5 @@ public interface KeyboardRecordService {
 
     public void insertRecordByTemp(KeyboardRecord keyboardRecord);
 
-    public void doInsertRecord(List<KeyboardRecord> keyboardRecords);
+    int saveTempRecord();
 }
