@@ -2,6 +2,7 @@ package com.lmwis.datachecker.init;
 
 import com.baomidou.mybatisplus.core.config.GlobalConfig;
 import com.lmwis.datachecker.computer.MyGlobalKeyListener;
+import com.lmwis.datachecker.computer.MyGlobalMouseListener;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.springframework.stereotype.Component;
@@ -19,8 +20,10 @@ import java.util.logging.Logger;
 public class GlobalKeyboardListenerStarter {
 
     final MyGlobalKeyListener myGlobalKeyListener;
+    final MyGlobalMouseListener myGlobalMouseListener;
 
-    public GlobalKeyboardListenerStarter(MyGlobalKeyListener myGlobalKeyListener){
+    public GlobalKeyboardListenerStarter(MyGlobalMouseListener myGlobalMouseListener,MyGlobalKeyListener myGlobalKeyListener){
+        this.myGlobalMouseListener = myGlobalMouseListener;
         this.myGlobalKeyListener = myGlobalKeyListener;
         init(myGlobalKeyListener);
     }
@@ -39,5 +42,8 @@ public class GlobalKeyboardListenerStarter {
             System.exit(1);
         }
         GlobalScreen.addNativeKeyListener(myGlobalKeyListener);
+        // Add the appropriate listeners.
+        GlobalScreen.addNativeMouseListener(myGlobalMouseListener);
+        GlobalScreen.addNativeMouseMotionListener(myGlobalMouseListener);
     }
 }
