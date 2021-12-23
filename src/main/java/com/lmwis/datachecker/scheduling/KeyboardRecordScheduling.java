@@ -2,7 +2,7 @@ package com.lmwis.datachecker.scheduling;
 
 
 import com.lmwis.datachecker.service.KeyboardRecordService;
-import lombok.AllArgsConstructor;
+import com.lmwis.datachecker.service.MouseRecordService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -15,20 +15,25 @@ import org.springframework.stereotype.Component;
 @Component
 public class KeyboardRecordScheduling {
 
-    KeyboardRecordService keyboardRecordService;
+    final KeyboardRecordService keyboardRecordService;
+    final MouseRecordService mouseRecordService;
 
-    public KeyboardRecordScheduling(KeyboardRecordService keyboardRecordService){
+    public KeyboardRecordScheduling(KeyboardRecordService keyboardRecordService,MouseRecordService mouseRecordService){
         this.keyboardRecordService = keyboardRecordService;
-        new Thread(new KeyboardRecordSchedulingTask(keyboardRecordService)).run();
+        this.mouseRecordService = mouseRecordService;
+        new Thread(new KeyboardRecordSchedulingTask(keyboardRecordService,mouseRecordService)).run();
     }
 
     @Slf4j
     static class KeyboardRecordSchedulingTask implements Runnable{
 
 
-        KeyboardRecordService keyboardRecordService;
-        public KeyboardRecordSchedulingTask(KeyboardRecordService keyboardRecordService){
+        final KeyboardRecordService keyboardRecordService;
+        final MouseRecordService mouseRecordService;
+
+        public KeyboardRecordSchedulingTask(KeyboardRecordService keyboardRecordService,MouseRecordService mouseRecordService){
             this.keyboardRecordService = keyboardRecordService;
+            this.mouseRecordService = mouseRecordService;
         }
 
         @Override
@@ -41,6 +46,7 @@ public class KeyboardRecordScheduling {
                     e.printStackTrace();
                 }
                 int count = keyboardRecordService.saveTempRecord();
+                mouseRecordService.saveTempRecord();
 //                log.info("定时任务写入缓存，count="+count);
             }
         }

@@ -2,13 +2,12 @@ package com.lmwis.datachecker.computer;
 
 import com.lmwis.datachecker.init.ComputerInfoHolder;
 import com.lmwis.datachecker.mapper.MouseRecord;
+import com.lmwis.datachecker.service.MouseRecordService;
 import lombok.extern.slf4j.Slf4j;
 import org.jnativehook.mouse.NativeMouseEvent;
 import org.jnativehook.mouse.NativeMouseInputListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.awt.*;
 import java.sql.Date;
 
 /**
@@ -25,13 +24,16 @@ public class MyGlobalMouseListener implements NativeMouseInputListener {
     public static final int MOUSE_RECORD_ACTION_RELEASED=2;
     public static final int MOUSE_RECORD_MODE_MOVE=1;
     public static final int MOUSE_RECORD_MODE_CLICK=2;
-    public static final int MOUSE_RECORD_BUTTON_LEFT=1;
-    public static final int MOUSE_RECORD_BUTTON_RIGHT=2;
+    public static final int MOUSE_RECORD_MODE_DRAG=3;
+//    public static final int MOUSE_RECORD_BUTTON_LEFT=1;
+//    public static final int MOUSE_RECORD_BUTTON_RIGHT=2;
 
     final ComputerInfoHolder computerInfoHolder;
+    final MouseRecordService mouseRecordService;
 
-    public MyGlobalMouseListener(ComputerInfoHolder computerInfoHolder) {
+    public MyGlobalMouseListener(ComputerInfoHolder computerInfoHolder, MouseRecordService mouseRecordService) {
         this.computerInfoHolder = computerInfoHolder;
+        this.mouseRecordService = mouseRecordService;
     }
 
     public void nativeMouseClicked(NativeMouseEvent e) {
@@ -39,31 +41,49 @@ public class MyGlobalMouseListener implements NativeMouseInputListener {
     }
 
     public void nativeMousePressed(NativeMouseEvent e) {
-//        System.out.println("Mouse Pressed: " + e.getButton());
-
         MouseRecord mouseRecord = new MouseRecord();
-        mouseRecord.setAction(1);
-        mouseRecord.setMode(1);
+        mouseRecord.setAction(MOUSE_RECORD_ACTION_PRESSED);
+        mouseRecord.setMode(MOUSE_RECORD_MODE_CLICK);
+        mouseRecord.setButton(e.getButton());
+        mouseRecord.setOwner_id(computerInfoHolder.getMyComputerInfo().getId());
         mouseRecord.setGmtCreate(new Date(new java.util.Date().getTime()));
         mouseRecord.setGmtModified(new Date(new java.util.Date().getTime()));
-
-        System.out.println(computerInfoHolder.getMyComputerInfo());
+        mouseRecordService.insertRecordByTemp(mouseRecord);
 
     }
 
     public void nativeMouseReleased(NativeMouseEvent e) {
-//        System.out.println("Mouse Released: " + e.getButton());
-
         MouseRecord mouseRecord = new MouseRecord();
-        mouseRecord.setAction(2);
+        mouseRecord.setAction(MOUSE_RECORD_ACTION_RELEASED);
+        mouseRecord.setMode(MOUSE_RECORD_MODE_CLICK);
+        mouseRecord.setButton(e.getButton());
+        mouseRecord.setOwner_id(computerInfoHolder.getMyComputerInfo().getId());
+        mouseRecord.setGmtCreate(new Date(new java.util.Date().getTime()));
+        mouseRecord.setGmtModified(new Date(new java.util.Date().getTime()));
+        mouseRecordService.insertRecordByTemp(mouseRecord);
     }
 
     public void nativeMouseMoved(NativeMouseEvent e) {
-//        System.out.println("Mouse Moved: " + e.getX() + ", " + e.getY());
-
+        MouseRecord mouseRecord = new MouseRecord();
+        mouseRecord.setMode(MOUSE_RECORD_MODE_MOVE);
+        mouseRecord.setButton(e.getButton());
+        mouseRecord.setX(e.getX());
+        mouseRecord.setY(e.getY());
+        mouseRecord.setOwner_id(computerInfoHolder.getMyComputerInfo().getId());
+        mouseRecord.setGmtCreate(new Date(new java.util.Date().getTime()));
+        mouseRecord.setGmtModified(new Date(new java.util.Date().getTime()));
+        mouseRecordService.insertRecordByTemp(mouseRecord);
     }
 
     public void nativeMouseDragged(NativeMouseEvent e) {
-//        System.out.println("Mouse Dragged: " + e.getX() + ", " + e.getY());
+        MouseRecord mouseRecord = new MouseRecord();
+        mouseRecord.setMode(MOUSE_RECORD_MODE_DRAG);
+        mouseRecord.setButton(e.getButton());
+        mouseRecord.setX(e.getX());
+        mouseRecord.setY(e.getY());
+        mouseRecord.setOwner_id(computerInfoHolder.getMyComputerInfo().getId());
+        mouseRecord.setGmtCreate(new Date(new java.util.Date().getTime()));
+        mouseRecord.setGmtModified(new Date(new java.util.Date().getTime()));
+        mouseRecordService.insertRecordByTemp(mouseRecord);
     }
 }

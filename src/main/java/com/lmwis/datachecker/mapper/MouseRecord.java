@@ -28,8 +28,14 @@ public class MouseRecord {
      */
     Integer mode;
 
+    /**
+     * move生效
+     */
     Integer x;
 
+    /**
+     * move生效
+     */
     Integer y;
 
     /**
@@ -46,11 +52,7 @@ public class MouseRecord {
      */
     Integer action;
 
-    /**
-     * 枚举值
-     * mac windows
-     */
-    String pcType;
+    Long owner_id;
 
     Date gmtCreate;
 
