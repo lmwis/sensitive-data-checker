@@ -7,6 +7,7 @@ import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.springframework.stereotype.Component;
 
+import java.awt.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -45,5 +46,7 @@ public class GlobalKeyboardListenerStarter {
         // Add the appropriate listeners.
         GlobalScreen.addNativeMouseListener(myGlobalMouseListener);
         GlobalScreen.addNativeMouseMotionListener(myGlobalMouseListener);
+
+
     }
 }

@@ -1,5 +1,6 @@
 package com.lmwis.datachecker.computer;
 
+import com.lmwis.datachecker.init.ComputerInfoHolder;
 import com.lmwis.datachecker.mapper.KeyboardRecord;
 import com.lmwis.datachecker.service.KeyboardRecordService;
 import lombok.extern.slf4j.Slf4j;
@@ -21,33 +22,36 @@ import java.sql.Date;
 @Slf4j
 public class MyGlobalKeyListener implements NativeKeyListener {
 
+    public static final int KEYBOARD_ACTION_PRESSED=1;
+    public static final int KEYBOARD_ACTION_RELEASED=2;
+
+    final ComputerInfoHolder computerInfoHolder;
+
     final KeyboardRecordService keyboardRecordService;
 
-    public MyGlobalKeyListener(KeyboardRecordService keyboardRecordService) {
+    public MyGlobalKeyListener(KeyboardRecordService keyboardRecordService, ComputerInfoHolder computerInfoHolder) {
         this.keyboardRecordService = keyboardRecordService;
+        this.computerInfoHolder = computerInfoHolder;
     }
 
     public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
         log.info("Key typed: "+ NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode()));
+        packAndSaveKeyboardObject(nativeKeyEvent, KEYBOARD_ACTION_PRESSED);
+    }
+
+    private void packAndSaveKeyboardObject(NativeKeyEvent nativeKeyEvent, int keyboardActionPressed) {
         KeyboardRecord keyboardRecord = new KeyboardRecord();
         keyboardRecord.setKeyText(NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode()));
         keyboardRecord.setKeyCode(nativeKeyEvent.getKeyCode());
-        keyboardRecord.setPcType(System.getProperty("os.name"));
-        keyboardRecord.setAction(1);
+        keyboardRecord.setPcType(computerInfoHolder.getMyComputerInfo().getOsName());
+        keyboardRecord.setAction(keyboardActionPressed);
         keyboardRecord.setGmtCreate(new Date(new java.util.Date().getTime()));
         keyboardRecord.setGmtModified(new Date(new java.util.Date().getTime()));
         keyboardRecordService.insertRecordByTemp(keyboardRecord);
     }
 
     public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
-        KeyboardRecord keyboardRecord = new KeyboardRecord();
-        keyboardRecord.setKeyText(NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode()));
-        keyboardRecord.setKeyCode(nativeKeyEvent.getKeyCode());
-        keyboardRecord.setPcType(System.getProperty("os.name"));
-        keyboardRecord.setAction(2);
-        keyboardRecord.setGmtCreate(new Date(new java.util.Date().getTime()));
-        keyboardRecord.setGmtModified(new Date(new java.util.Date().getTime()));
-        keyboardRecordService.insertRecordByTemp(keyboardRecord);
+        packAndSaveKeyboardObject(nativeKeyEvent, KEYBOARD_ACTION_RELEASED);
 
     }
 
