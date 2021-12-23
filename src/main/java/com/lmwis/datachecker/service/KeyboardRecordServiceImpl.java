@@ -42,7 +42,7 @@ public class KeyboardRecordServiceImpl implements KeyboardRecordService {
         int insert = 0;
         try {
             for (KeyboardRecord k : o) {
-                log.info("do save record " + k);
+//                log.info("do save record " + k);
                 insert += keyboardRecordMapper.insert(k);
             }
         } catch (Exception e) {

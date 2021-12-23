@@ -42,7 +42,7 @@ public class MouseRecordServiceImpl implements MouseRecordService {
         int insert = 0;
         try {
             for (MouseRecord k : o) {
-                log.info("do save record " + k);
+//                log.info("do save record " + k);
                 insert += mouseRecordMapper.insert(k);
             }
         } catch (Exception e) {

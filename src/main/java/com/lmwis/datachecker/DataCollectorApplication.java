@@ -15,6 +15,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @MapperScan("com.lmwis.datachecker.mapper")
 @EnableScheduling
 public class DataCollectorApplication {
+    static{
+        System.setProperty("java.awt.headless", "false");
+    }
     public static void main(String[] args) {
         SpringApplication.run(DataCollectorApplication.class,args);
     }
