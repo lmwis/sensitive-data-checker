@@ -36,7 +36,7 @@ public class KeyboardRecord {
      * 枚举值
      * mac windows
      */
-    String pcType;
+    Long ownerId;
 
     Date gmtCreate;
 

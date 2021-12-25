@@ -6,7 +6,6 @@ import com.lmwis.datachecker.service.KeyboardRecordService;
 import lombok.extern.slf4j.Slf4j;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
@@ -43,7 +42,7 @@ public class MyGlobalKeyListener implements NativeKeyListener {
         KeyboardRecord keyboardRecord = new KeyboardRecord();
         keyboardRecord.setKeyText(NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode()));
         keyboardRecord.setKeyCode(nativeKeyEvent.getKeyCode());
-        keyboardRecord.setPcType(computerInfoHolder.getMyComputerInfo().getOsName());
+        keyboardRecord.setOwnerId(computerInfoHolder.getMyComputerInfo().getId());
         keyboardRecord.setAction(keyboardActionPressed);
         keyboardRecord.setGmtCreate(new Date(new java.util.Date().getTime()));
         keyboardRecord.setGmtModified(new Date(new java.util.Date().getTime()));
