@@ -2,14 +2,10 @@ package com.lmwis.datachecker.init;
 
 import org.junit.Test;
 import org.pcap4j.core.*;
-import org.pcap4j.packet.EthernetPacket;
-import org.pcap4j.packet.IpV4Packet;
 import org.pcap4j.packet.Packet;
-import org.pcap4j.packet.TcpPacket;
 import org.pcap4j.util.NifSelector;
 
 import java.io.IOException;
-import java.net.Inet4Address;
 import java.net.InetAddress;
 
 /**
@@ -29,7 +25,7 @@ public class NetPackStarterTest {
 
     @Test
     public void loopTest() throws PcapNativeException, NotOpenException {
-        String filter = "ip and tcp and (dst host 127.0.0.1 and dst port 80)"; // 设置过滤的字符串
+        String filter = "tcp port 443"; // 设置过滤的字符串
 
         // 设置要抓包的网卡
         PcapNetworkInterface nif;
@@ -62,21 +58,21 @@ public class NetPackStarterTest {
                          * Pcap4J的Packet API使您可以从协议标头中获取信息。
                          */
 
-                        IpV4Packet ipV4Packet = packet.get(IpV4Packet.class); // 直接获取IpV4报文
-                        Inet4Address srcAddr = ipV4Packet.getHeader().getSrcAddr();
-                        System.out.println(srcAddr); // 输出源IP地址
-
-                        // 可以直接get你想要的报文类型，只要Pcap4J库原生支持
-                        EthernetPacket ethernetPacket = packet.get(EthernetPacket.class); // 以太网报文
-                        TcpPacket tcpPacket = packet.get(TcpPacket.class); // TCP报文
-
-                        // 也可以通过getPayload()的方式一层一层读取
-                        EthernetPacket.EthernetHeader ethernetHeader = ethernetPacket.getHeader(); // 读取以太网帧头部
-                        IpV4Packet ipV4Packet2 = (IpV4Packet)tcpPacket.getPayload(); // 注意get出来的类型，强转可能抛异常
-
-                        // 若需要解析的协议Pcap没有支持，那就需要自己实现这个报文的Java类，然后写反序列化方法了
-                        byte[] rawData = ethernetPacket.getRawData(); // 获取以太网的原始二进制数据
-
+//                        IpV4Packet ipV4Packet = packet.get(IpV4Packet.class); // 直接获取IpV4报文
+//                        Inet4Address srcAddr = ipV4Packet.getHeader().getSrcAddr();
+//                        System.out.println(srcAddr); // 输出源IP地址
+//
+//                        // 可以直接get你想要的报文类型，只要Pcap4J库原生支持
+//                        EthernetPacket ethernetPacket = packet.get(EthernetPacket.class); // 以太网报文
+//                        TcpPacket tcpPacket = packet.get(TcpPacket.class); // TCP报文
+//
+//                        // 也可以通过getPayload()的方式一层一层读取
+//                        EthernetPacket.EthernetHeader ethernetHeader = ethernetPacket.getHeader(); // 读取以太网帧头部
+//                        IpV4Packet ipV4Packet2 = (IpV4Packet)tcpPacket.getPayload(); // 注意get出来的类型，强转可能抛异常
+//
+//                        // 若需要解析的协议Pcap没有支持，那就需要自己实现这个报文的Java类，然后写反序列化方法了
+//                        byte[] rawData = ethernetPacket.getRawData(); // 获取以太网的原始二进制数据
+//                        System.out.println(packet);
                         // 然后调你自己对应的反序列化方法解析这个二进制
                         // TO-DO ...
                     }
@@ -99,25 +95,24 @@ public class NetPackStarterTest {
 
             System.out.println(nif.getName());
 
-
+            PcapNetworkInterface.PromiscuousMode mode = PcapNetworkInterface.PromiscuousMode.PROMISCUOUS;
             int snapLen = 64 * 1024;
 //            PcapNetworkInterface.PromiscuousMode mode = PcapNetworkInterface.PromiscuousMode.PROMISCUOUS;
             int timeout = 50;
-//            PcapHandle handle = nif.openLive(snapLen, mode, timeout);
+            PcapHandle handle = nif.openLive(snapLen, mode, timeout);
 //            Packet packet = handle.getNextPacketEx();
 //            handle.close();
 //            IpV4Packet ipV4Packet = packet.get(IpV4Packet.class);
 //            Inet4Address srcAddr = ipV4Packet.getHeader().getSrcAddr();
 //            System.out.println(srcAddr);
-            PcapHandle.Builder phb = new PcapHandle.Builder(nif.getName()).snaplen(snapLen)
-                    .promiscuousMode(PcapNetworkInterface.PromiscuousMode.PROMISCUOUS).timeoutMillis(timeout)
-                    .bufferSize(1 * 1024 * 1024);
-            PcapHandle handle = phb.build();
-            String filter = "src host 10.111.34.251 && dst host 10.111.34.251";//过滤条件
+
+
+            String filter = "http and ip src 10.111.34.251";//过滤条件
             handle.setFilter(filter, BpfProgram.BpfCompileMode.OPTIMIZE);
             PacketListener listener = new PacketListener() {
                 @Override
                 public void gotPacket(Packet packet) {
+                    System.out.println(handle.getTimestamp());
                     System.out.println(packet);
                     System.out.println("-----------------------------------------");
                 }
