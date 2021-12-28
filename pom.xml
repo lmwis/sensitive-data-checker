@@ -52,8 +52,8 @@
             <version>2.0.2</version>
         </dependency>
         <dependency>
-            <groupId>com.fehead.open</groupId>
-            <artifactId>fehead-common</artifactId>
+            <groupId>cn.lmwis</groupId>
+            <artifactId>lmwis-common</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
