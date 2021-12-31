@@ -19,6 +19,7 @@ public class DataCollectorApplication {
         System.setProperty("java.awt.headless", "false");
     }
     public static void main(String[] args) {
+        
         SpringApplication.run(DataCollectorApplication.class,args);
     }
 }
