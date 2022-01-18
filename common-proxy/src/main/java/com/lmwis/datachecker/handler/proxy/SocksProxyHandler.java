@@ -8,6 +8,8 @@ import io.netty.util.Attribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.lmwis.datachecker.bean.Constans.CLIENTREQUEST_ATTRIBUTE_KEY;
+
 
 /**
  * socks的代理handler

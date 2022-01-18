@@ -1,12 +1,12 @@
 package com.lmwis.datachecker.utils;
 
-import com.github.puhiayang.bean.ClientRequest;
-import com.github.puhiayang.bean.Constans;
+import com.lmwis.datachecker.bean.ClientRequest;
+import com.lmwis.datachecker.bean.Constans;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.util.Attribute;
 
-import static com.github.puhiayang.bean.Constans.CLIENTREQUEST_ATTRIBUTE_KEY;
+import static com.lmwis.datachecker.bean.Constans.CLIENTREQUEST_ATTRIBUTE_KEY;
 
 /**
  * 代理请求工具类

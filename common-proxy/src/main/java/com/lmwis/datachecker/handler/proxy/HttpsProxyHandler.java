@@ -15,6 +15,8 @@ import io.netty.util.Attribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.lmwis.datachecker.bean.Constans.CLIENTREQUEST_ATTRIBUTE_KEY;
+
 /**
  * 对https请求进行代理
  * created on 2019/10/25 18:00

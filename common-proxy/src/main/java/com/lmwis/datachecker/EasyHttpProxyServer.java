@@ -1,9 +1,9 @@
 package com.lmwis.datachecker;
 
 
-import com.github.puhiayang.handler.proxy.HttpProxyHandler;
-import com.github.puhiayang.handler.proxy.HttpsProxyHandler;
-import com.github.puhiayang.handler.proxy.SocksProxyHandler;
+import com.lmwis.datachecker.handler.proxy.HttpProxyHandler;
+import com.lmwis.datachecker.handler.proxy.HttpsProxyHandler;
+import com.lmwis.datachecker.handler.proxy.SocksProxyHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
