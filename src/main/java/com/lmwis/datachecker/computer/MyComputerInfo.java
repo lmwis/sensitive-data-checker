@@ -9,7 +9,7 @@ import lombok.ToString;
 import java.util.Date;
 
 /**
- * @Description: current pc info. exp: width,height,os,name
+ * @Description: current pc info. exp: width,height,os,name;
  * @Author: lmwis
  * @Data: 2021/12/23 5:06 下午
  * @Version: 1.0
