@@ -25,13 +25,17 @@ import org.slf4j.LoggerFactory;
  */
 public class EasyHttpProxyServer {
     private Logger logger = LoggerFactory.getLogger(EasyHttpProxyServer.class);
-    private static EasyHttpProxyServer instace = new EasyHttpProxyServer();
+    private volatile static  EasyHttpProxyServer instance = new EasyHttpProxyServer();
 
-    public static EasyHttpProxyServer getInstace() {
-        if (instace == null) {
-            instace = new EasyHttpProxyServer();
+    public static EasyHttpProxyServer getInstance() {
+        if (instance == null) {
+            synchronized (EasyHttpProxyServer.class){
+                if(instance == null){
+                    instance = new EasyHttpProxyServer();
+                }
+            }
         }
-        return instace;
+        return instance;
     }
 
     public static void main(String[] args) {
@@ -83,6 +87,7 @@ public class EasyHttpProxyServer {
         } finally {
             bossGroup.shutdownGracefully();
             workerGroup.shutdownGracefully();
+            logger.info("代理关闭");
         }
     }
 }

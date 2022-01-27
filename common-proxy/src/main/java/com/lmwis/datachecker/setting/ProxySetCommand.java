@@ -47,4 +47,9 @@ public class ProxySetCommand {
         Runtime.getRuntime().exec(SET_HTTP_PROXY_COMMAND);
         Runtime.getRuntime().exec(SET_HTTPS_PROXY_COMMAND);
     }
+
+    public static void setOffProxy() throws IOException {
+        Runtime.getRuntime().exec(SET_OFF_HTTP_PROXY_COMMAND);
+        Runtime.getRuntime().exec(SET_OFF_HTTPS_PROXY_COMMAND);
+    }
 }

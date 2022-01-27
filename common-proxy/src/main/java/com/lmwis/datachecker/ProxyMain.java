@@ -13,7 +13,8 @@ import java.io.IOException;
 public class ProxyMain {
     public static void main(String[] args) throws IOException {
         int port = 8080;
+        // 为网络设置代理
         ProxySetCommand.setProxy(port);
-        EasyHttpProxyServer.getInstace().start(port);
+        EasyHttpProxyServer.getInstance().start(port);
     }
 }

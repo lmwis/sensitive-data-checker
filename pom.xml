@@ -6,6 +6,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>common-proxy</module>
+        <module>netty-test</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
