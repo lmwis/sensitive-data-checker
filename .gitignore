@@ -3,3 +3,7 @@
 out
 target
 application-enc.yml
+
+ca.crt
+ca.key
+ca_private.der
