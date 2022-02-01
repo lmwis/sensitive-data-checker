@@ -1,5 +1,6 @@
 package com.lmwis.datachecker;
 
+import com.lmwis.datachecker.setting.JvmHookSetting;
 import com.lmwis.datachecker.setting.ProxySetCommand;
 
 import java.io.IOException;
@@ -15,6 +16,11 @@ public class ProxyMain {
         int port = 8080;
         // 为网络设置代理
         ProxySetCommand.setProxy(port);
+        // 注册jvm关闭回调
+        JvmHookSetting.registerShutdownHook();
+
+
         EasyHttpProxyServer.getInstance().start(port);
+        Runtime.getRuntime().exit(0);
     }
 }

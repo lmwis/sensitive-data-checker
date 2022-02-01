@@ -26,7 +26,7 @@ public class HttpProxyHandler extends ChannelInboundHandlerAdapter implements IP
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        logger.debug("[HttpProxyHandler]");
+//        logger.debug("[HttpProxyHandler]");
         if (msg instanceof HttpRequest) {
             HttpRequest httpRequest = (HttpRequest) msg;
             //获取客户端请求
@@ -40,7 +40,7 @@ public class HttpProxyHandler extends ChannelInboundHandlerAdapter implements IP
             }
             //如果是connect代理请求，返回成功以代表代理成功
             if (sendSuccessResponseIfConnectMethod(ctx, httpRequest.method().name())) {
-                logger.debug("[HttpProxyHandler][channelRead] sendSuccessResponseConnect");
+//                logger.debug("[HttpProxyHandler][channelRead] sendSuccessResponseConnect");
                 ctx.channel().pipeline().remove("httpRequestDecoder");
                 ctx.channel().pipeline().remove("httpResponseEncoder");
                 ctx.channel().pipeline().remove("httpAggregator");
@@ -104,10 +104,10 @@ public class HttpProxyHandler extends ChannelInboundHandlerAdapter implements IP
                 if (future.isSuccess()) {
                     //连接成功
                     future.channel().writeAndFlush(msg);
-                    logger.debug("[operationComplete] connect remote server success!");
+//                    logger.debug("[operationComplete] connect remote server success!");
                 } else {
                     //连接失败
-                    logger.error("[operationComplete] 连接远程server失败了");
+//                    logger.error("[operationComplete] 连接远程server失败了");
                     ctx.channel().close();
                 }
             }

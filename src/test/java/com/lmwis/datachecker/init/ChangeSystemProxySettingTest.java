@@ -42,7 +42,7 @@ public class ChangeSystemProxySettingTest {
 
     @Test
     public void doChange() throws IOException {
-        System.out.println(11);
+        System.out.println("turn off system proxy");
 
         Process ls = Runtime.getRuntime().exec(SET_HTTP_PROXY_COMMAND);
         Runtime.getRuntime().exec(SET_HTTPS_PROXY_COMMAND);

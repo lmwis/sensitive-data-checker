@@ -29,20 +29,20 @@ public class HttpsProxyHandler extends ChannelInboundHandlerAdapter implements I
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        logger.debug("[HttpsProxyHandler]");
+//        logger.debug("[HttpsProxyHandler]");
         Attribute<ClientRequest> clientRequestAttribute = ctx.channel().attr(CLIENTREQUEST_ATTRIBUTE_KEY);
         ClientRequest clientRequest = clientRequestAttribute.get();
         if (msg instanceof HttpRequest) {
             sendToServer(clientRequest, ctx, msg);
         } else if (msg instanceof HttpContent) {
-            logger.debug("[HttpsProxyHandler][HttpContent]不作处理！");
+//            logger.debug("[HttpsProxyHandler][HttpContent]不作处理！");
             //content不做处理
 //            ReferenceCountUtil.release(msg);
         } else {
             ByteBuf byteBuf = (ByteBuf) msg;
             // ssl握手
             if (byteBuf.getByte(0) == 22) {
-                logger.debug("[HttpsProxyHandler][do hands]");
+//                logger.debug("[HttpsProxyHandler][do hands]");
                 sendToClient(clientRequest, ctx, msg);
             }
         }
@@ -50,7 +50,7 @@ public class HttpsProxyHandler extends ChannelInboundHandlerAdapter implements I
 
     @Override
     public void sendToServer(ClientRequest clientRequest, ChannelHandlerContext ctx, Object msg) {
-        logger.debug("[HttpsProxyHandler][sendToServer] 发送https请求到server");
+//        logger.debug("[HttpsProxyHandler][sendToServer] 发送https请求到server");
         Channel clientChannel = ctx.channel();
         Bootstrap bootstrap = new Bootstrap();
         bootstrap.group(new NioEventLoopGroup(1))
@@ -75,9 +75,9 @@ public class HttpsProxyHandler extends ChannelInboundHandlerAdapter implements I
         httpsRequestCf.addListener((ChannelFutureListener) future -> {
             if (future.isSuccess()) {
                 future.channel().writeAndFlush(msg);
-                logger.debug("[HttpsProxyHandler][sendToServer]目标连接创建成功，并已转发了数据包");
+//                logger.debug("[HttpsProxyHandler][sendToServer]目标连接创建成功，并已转发了数据包");
             } else {
-                logger.error("[HttpsProxyHandler][sendToServer]连接远程server失败");
+//                logger.error("[HttpsProxyHandler][sendToServer]连接远程server失败");
             }
         });
     }
@@ -85,7 +85,7 @@ public class HttpsProxyHandler extends ChannelInboundHandlerAdapter implements I
     @Override
     public void sendToClient(ClientRequest clientRequest, ChannelHandlerContext ctx, Object msg) {
         try {
-            logger.debug("[HttpsProxyHandler][sendToClient] 与客户端进行https握手");
+//            logger.debug("[HttpsProxyHandler][sendToClient] 与客户端进行https握手");
             SslContext sslCtx = SslContextBuilder
                     .forServer(HttpsSupport.getInstance().getServerPriKey(), HttpsSupport.getInstance().getCert(clientRequest.getHost())).build();
             //接收客户端请求，将客户端的请求内容解码
