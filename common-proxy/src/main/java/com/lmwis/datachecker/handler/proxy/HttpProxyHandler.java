@@ -26,7 +26,6 @@ public class HttpProxyHandler extends ChannelInboundHandlerAdapter implements IP
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-//        logger.debug("[HttpProxyHandler]");
         if (msg instanceof HttpRequest) {
             HttpRequest httpRequest = (HttpRequest) msg;
             //获取客户端请求
@@ -34,7 +33,7 @@ public class HttpProxyHandler extends ChannelInboundHandlerAdapter implements IP
             if (clientRequest == null) {
                 //从本次请求中获取
                 Attribute<ClientRequest> clientRequestAttribute = ctx.channel().attr(CLIENTREQUEST_ATTRIBUTE_KEY);
-                clientRequest = ProxyRequestUtil.getClientReuqest(httpRequest);
+                clientRequest = ProxyRequestUtil.getClientRequest(httpRequest);
                 //将clientRequest保存到channel中
                 clientRequestAttribute.setIfAbsent(clientRequest);
             }

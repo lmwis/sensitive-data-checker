@@ -76,6 +76,8 @@ public class HttpsSupport {
 
     private static HttpsSupport httpsSupport;
 
+    private String classpath = "/Users/lmwis/IdeaProjects/sensitive-data-checker/";
+
     public static HttpsSupport getInstance() {
         if (httpsSupport == null) {
             httpsSupport = new HttpsSupport();

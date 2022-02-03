@@ -19,7 +19,6 @@ public class ProxyMain {
         // 注册jvm关闭回调
         JvmHookSetting.registerShutdownHook();
 
-
         EasyHttpProxyServer.getInstance().start(port);
         Runtime.getRuntime().exit(0);
     }
