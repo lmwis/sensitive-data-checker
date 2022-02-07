@@ -11,7 +11,7 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 
 /**
- * @Description: TODO
+ * @Description: netty test
  * @Author: lmwis
  * @Data: 2022/1/27 4:19 下午
  * @Version: 1.0
