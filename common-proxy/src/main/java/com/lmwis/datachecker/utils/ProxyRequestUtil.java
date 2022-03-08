@@ -4,6 +4,9 @@ import com.lmwis.datachecker.bean.ClientRequest;
 import com.lmwis.datachecker.bean.Constans;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.HttpRequest;
+import io.netty.util.Attribute;
+
+import static com.lmwis.datachecker.bean.Constans.CLIENTREQUEST_ATTRIBUTE_KEY;
 
 /**
  * @Description: TODO
@@ -36,7 +39,14 @@ public class ProxyRequestUtil {
         return new ClientRequest(hostStrArr[0], port);
     }
 
+    /**
+     * 从channel中获得client request
+     * @param channel
+     * @return
+     */
     public static ClientRequest getClientRequest(Channel channel){
-        channel.
+        //将clientRequest保存到channel中
+        Attribute<ClientRequest> clientRequestAttribute = channel.attr(CLIENTREQUEST_ATTRIBUTE_KEY);
+        return clientRequestAttribute.get();
     }
 }

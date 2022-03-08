@@ -28,6 +28,10 @@ public class HttpProxyHandler extends ChannelInboundHandlerAdapter implements IP
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof HttpRequest) {
             HttpRequest httpRequest = (HttpRequest) msg;
+
+            // 解析存储请求
+            resolveSavedHttpRequest(httpRequest);
+
             //获取客户端请求
             ClientRequest clientRequest = ProxyRequestUtil.getClientRequest(ctx.channel());
             if (clientRequest == null) {
@@ -116,5 +120,11 @@ public class HttpProxyHandler extends ChannelInboundHandlerAdapter implements IP
     @Override
     public void sendToClient(ClientRequest clientRequest, ChannelHandlerContext ctx, Object msg) {
 
+    }
+
+    private void resolveSavedHttpRequest(HttpRequest httpRequest){
+        System.out.println("--uri: "+httpRequest.uri());
+        System.out.println("--method: "+httpRequest.method());
+        System.out.println("--method: "+httpRequest.headers().getAsString("utf-8"));
     }
 }

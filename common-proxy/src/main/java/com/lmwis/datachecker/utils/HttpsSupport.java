@@ -93,9 +93,12 @@ public class HttpsSupport {
             //加载证书
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             //从项目目录加入ca根证书
-            X509Certificate caCert = loadCert(classLoader.getResourceAsStream("ca.crt"));
+//            X509Certificate caCert = loadCert(classLoader.getResourceAsStream("ca.crt"));
+
+            X509Certificate caCert = loadCert(classLoader.getResourceAsStream(""));
             //从项目目录加入ca私钥
-            PrivateKey caPriKey = loadPriKey(classLoader.getResourceAsStream("ca_private.der"));
+//            PrivateKey caPriKey = loadPriKey(classLoader.getResourceAsStream("ca_private.der"));
+            PrivateKey caPriKey = loadPriKey(classLoader.getResourceAsStream(""));
             setCaPriKey(caPriKey);
             //从证书中获取使用者信息
             setIssuer(getSubjectByCert(caCert));

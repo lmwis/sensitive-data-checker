@@ -17,7 +17,7 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
  * @Version: 1.0
  */
 public class NettyTestServer {
-    private final int PORT = 888;
+    private final int PORT = 8888;
     public static void main(String[] args) throws InterruptedException {
 
         new NettyTestServer().start();

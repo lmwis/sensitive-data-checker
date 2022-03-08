@@ -18,6 +18,7 @@ public class TestHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, FullHttpRequest fullHttpRequest) throws Exception {
+
         System.out.println("class:" +fullHttpRequest.getClass().getName());
         DefaultFullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
                 HttpResponseStatus.OK,

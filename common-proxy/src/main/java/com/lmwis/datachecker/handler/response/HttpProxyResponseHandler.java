@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -28,10 +29,11 @@ public class HttpProxyResponseHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof FullHttpResponse) {
             FullHttpResponse response = (FullHttpResponse) msg;
-            logger.debug("[channelRead][FullHttpResponse] 接收到远程的数据1 content:{}", response.content().toString(Charset.defaultCharset()));
+
+            logger.debug("[channelRead][FullHttpResponse] 接收到远程的数据1 content:{}", response.content().toString(StandardCharsets.UTF_8));
         } else if (msg instanceof DefaultHttpResponse) {
             DefaultHttpResponse response = (DefaultHttpResponse) msg;
-            logger.debug("[channelRead][FullHttpResponse] 接收到远程的数据 content:{}", response.toString());
+            logger.debug("[channelRead][DefaultHttpResponse] 接收到远程的数据 content:{}", response.toString());
         } else if (msg instanceof DefaultHttpContent) {
             DefaultHttpContent httpContent = (DefaultHttpContent) msg;
             logger.debug("[channelRead][DefaultHttpContent] 接收到远程的数据 content:{}", httpContent.content().toString(Charset.defaultCharset()));
