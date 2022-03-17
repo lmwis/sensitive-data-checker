@@ -1,5 +1,7 @@
 package com.lmwis.datachecker.pratice;
 
+import com.lmwis.datachecker.pratice.setting.JvmHookSetting;
+import com.lmwis.datachecker.pratice.setting.ProxySetCommand;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -10,6 +12,8 @@ import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 
+import java.io.IOException;
+
 /**
  * @Description: netty test
  * @Author: lmwis
@@ -17,8 +21,13 @@ import io.netty.handler.codec.http.HttpResponseEncoder;
  * @Version: 1.0
  */
 public class NettyTestServer {
-    private final int PORT = 8888;
-    public static void main(String[] args) throws InterruptedException {
+    private final static int PORT = 8888;
+    public static void main(String[] args) throws InterruptedException, IOException {
+
+        // 为网络设置代理
+        ProxySetCommand.setProxy(PORT);
+        // 注册jvm关闭回调
+        JvmHookSetting.registerShutdownHook();
 
         new NettyTestServer().start();
     }
