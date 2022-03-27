@@ -1,5 +1,7 @@
 package com.lmwis.datachecker.pratice;
 
+import com.lmwis.datachecker.pratice.proxy.handler.TestHttpHandler;
+import com.lmwis.datachecker.pratice.proxy.handler.TestHttpsHandler;
 import com.lmwis.datachecker.pratice.setting.JvmHookSetting;
 import com.lmwis.datachecker.pratice.setting.ProxySetCommand;
 import io.netty.bootstrap.ServerBootstrap;
@@ -44,7 +46,8 @@ public class NettyTestServer {
                                 .addLast("decoder",new HttpRequestDecoder())
                                 .addLast("encoder",new HttpResponseEncoder())
                                 .addLast("aggregator",new HttpObjectAggregator(512*1024))
-                                .addLast("handler",new TestHttpHandler());
+                                .addLast("httpHandler",new TestHttpHandler())
+                                .addLast("httpsHandler", new TestHttpsHandler());
                     }
                 })
                 .option(ChannelOption.SO_BACKLOG,128)

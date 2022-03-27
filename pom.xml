@@ -17,27 +17,17 @@
     <groupId>com.lmwis.datachecker</groupId>
     <artifactId>sensitive-data-checker</artifactId>
     <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <mysql.connector.version>8.0.21</mysql.connector.version>
+        <httpclient.version>4.5.13</httpclient.version>
+        <jnative.version>2.0.2</jnative.version>
+        <lmwis.common.version>1.0-SNAPSHOT</lmwis.common.version>
+        <mybatis.plus.version>3.4.3.4</mybatis.plus.version>
+        <netty.version>4.1.42.Final</netty.version>
+    </properties>
+
     <dependencies>
-
-        <!-- https://mvnrepository.com/artifact/org.pcap4j/pcap4j-core -->
-        <dependency>
-            <groupId>org.pcap4j</groupId>
-            <artifactId>pcap4j-core</artifactId>
-            <version>1.8.2</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.pcap4j/pcap4j-packetfactory-static -->
-        <dependency>
-            <groupId>org.pcap4j</groupId>
-            <artifactId>pcap4j-packetfactory-static</artifactId>
-            <version>1.8.2</version>
-        </dependency>
-        <dependency>
-            <groupId>net.lightbody.bmp</groupId>
-            <artifactId>browsermob-core</artifactId>
-            <version>2.1.5</version>
-            <scope>test</scope>
-        </dependency>
-
 
         <!--web-->
 <!--        <dependency>-->
@@ -48,25 +38,36 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>8.0.21</version>
+            <version>${mysql.connector.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.1stleg/jnativehook -->
         <dependency>
             <groupId>com.1stleg</groupId>
             <artifactId>jnativehook</artifactId>
-            <version>2.0.2</version>
+            <version>${jnative.version}</version>
         </dependency>
         <dependency>
             <groupId>cn.lmwis</groupId>
             <artifactId>lmwis-common</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${lmwis.common.version}</version>
         </dependency>
         <dependency>
             <groupId>com.baomidou</groupId>
             <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.4.3.4</version>
+            <version>${mybatis.plus.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>${httpclient.version}</version>
         </dependency>
 
+        <!-- netty -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
 
     </dependencies>
 
