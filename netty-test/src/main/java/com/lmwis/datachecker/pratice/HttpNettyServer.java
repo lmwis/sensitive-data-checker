@@ -1,9 +1,6 @@
 package com.lmwis.datachecker.pratice;
 
 import com.lmwis.datachecker.pratice.proxy.handler.TestHttpHandler;
-import com.lmwis.datachecker.pratice.proxy.handler.TestHttpsHandler;
-import com.lmwis.datachecker.pratice.setting.JvmHookSetting;
-import com.lmwis.datachecker.pratice.setting.ProxySetCommand;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
@@ -15,6 +12,11 @@ import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.CertificateException;
 
 /**
  * @Description: netty test
@@ -22,18 +24,9 @@ import java.io.IOException;
  * @Data: 2022/1/27 4:19 下午
  * @Version: 1.0
  */
-public class NettyTestServer {
-    private final static int PORT = 8888;
-    public static void main(String[] args) throws InterruptedException, IOException {
+public class HttpNettyServer {
 
-        // 为网络设置代理
-        ProxySetCommand.setProxy(PORT);
-        // 注册jvm关闭回调
-        JvmHookSetting.registerShutdownHook();
-
-        new NettyTestServer().start();
-    }
-    public void start() throws InterruptedException {
+    public void start(int port) throws InterruptedException, NoSuchAlgorithmException, UnrecoverableKeyException, CertificateException, KeyStoreException, IOException, KeyManagementException {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         NioEventLoopGroup nioEventLoopGroup = new NioEventLoopGroup();
         serverBootstrap.group(nioEventLoopGroup)
@@ -41,17 +34,15 @@ public class NettyTestServer {
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
-                        System.out.println("init channel:"+socketChannel);
                         socketChannel.pipeline()
                                 .addLast("decoder",new HttpRequestDecoder())
                                 .addLast("encoder",new HttpResponseEncoder())
                                 .addLast("aggregator",new HttpObjectAggregator(512*1024))
-                                .addLast("httpHandler",new TestHttpHandler())
-                                .addLast("httpsHandler", new TestHttpsHandler());
+                                .addLast("httpHandler",new TestHttpHandler());
                     }
                 })
                 .option(ChannelOption.SO_BACKLOG,128)
                 .childOption(ChannelOption.SO_KEEPALIVE,Boolean.TRUE);
-        serverBootstrap.bind(PORT).sync();
+        serverBootstrap.bind(port).sync();
     }
 }

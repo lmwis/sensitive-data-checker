@@ -5,7 +5,7 @@ import com.lmwis.datachecker.pratice.pojo.HttpResponseInfo;
 import com.lmwis.datachecker.pratice.util.INetStringUtil;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
 import io.netty.util.AsciiString;
 import lombok.extern.slf4j.Slf4j;
@@ -28,34 +28,44 @@ import java.util.*;
  * @Version: 1.0
  */
 @Slf4j
-public class TestHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+public class TestHttpHandler extends ChannelInboundHandlerAdapter {
 
     private AsciiString contentType = HttpHeaderValues.TEXT_PLAIN;
 
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, FullHttpRequest fullHttpRequest) throws Exception {
+    public void channelRead(ChannelHandlerContext channelHandlerContext, Object msg) throws Exception {
 
-        if (StringUtils.equals(INetStringUtil.HTTPS_FLAG,INetStringUtil.resolveProtocolFromUrl(fullHttpRequest.uri()))){
-            channelHandlerContext.fireChannelRead(fullHttpRequest);
-        }else {
-            HttpRequestInfo requestInfo = convertHttpRequest(channelHandlerContext, fullHttpRequest);
+        if (msg instanceof FullHttpRequest){
 
-            // 执行代理请求
-            HttpResponseInfo responseInfo = doProxyRequest(requestInfo);
+            FullHttpRequest fullHttpRequest = (FullHttpRequest)msg;
 
-            String originData = responseInfo.getContent();
-            Map<String, String> headers = responseInfo.getHeaders();
-            log.debug("<originResponse> responseInfo:{}", responseInfo);
-            DefaultFullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.valueOf(responseInfo.getHttpVersion()),
-                    HttpResponseStatus.valueOf(responseInfo.getResponseCode()),
-                    Unpooled.copiedBuffer(originData.getBytes()));
-            HttpHeaders heads = response.headers();
-            headers.forEach((k, v) -> {
-                if (k != null) {
-                    heads.add(k, v);
-                }
-            });
-            channelHandlerContext.write(response);
+            if (fullHttpRequest.method().equals(HttpMethod.CONNECT)){
+                log.debug("Connect method should be handler by https");
+            }
+
+            if (StringUtils.equals(INetStringUtil.HTTPS_FLAG,INetStringUtil.resolveProtocolFromUrl(fullHttpRequest.uri()))){
+                channelHandlerContext.fireChannelRead(fullHttpRequest);
+            }else {
+                HttpRequestInfo requestInfo = convertHttpRequest(channelHandlerContext, fullHttpRequest);
+
+                // 执行代理请求
+                HttpResponseInfo responseInfo = doProxyRequest(requestInfo);
+
+                String originData = responseInfo.getContent();
+                Map<String, String> headers = responseInfo.getHeaders();
+                log.debug("<originResponse> responseInfo:{}", responseInfo);
+                DefaultFullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.valueOf(responseInfo.getHttpVersion()),
+                        HttpResponseStatus.valueOf(responseInfo.getResponseCode()),
+                        Unpooled.copiedBuffer(originData.getBytes()));
+                HttpHeaders heads = response.headers();
+                headers.forEach((k, v) -> {
+                    if (k != null) {
+                        heads.add(k, v);
+                    }
+                });
+                channelHandlerContext.write(response);
+            }
+            super.channelRead(channelHandlerContext, msg);
         }
     }
 
