@@ -12,8 +12,8 @@ import java.io.IOException;
  * @Version: 1.0
  */
 public class ProxyMain {
-    public static void main(String[] args) throws IOException {
-        int port = 8080;
+    public static void starterServer(String[] args) throws IOException {
+        int port = 8888;
         // 为网络设置代理
         ProxySetCommand.setProxy(port);
         // 注册jvm关闭回调

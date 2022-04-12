@@ -27,6 +27,6 @@ public class NettyProxyStarter {
         JvmHookSetting.registerShutdownHook();
 
         new HttpNettyServer().start(HTTP_PORT);
-//        new HttpsNettyServer().start(HTTPS_PORT);
+        new HttpsNettyServer().start(HTTPS_PORT);
     }
 }

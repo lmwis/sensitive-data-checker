@@ -12,8 +12,10 @@ import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+import org.springframework.util.ResourceUtils;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.*;
@@ -93,12 +95,9 @@ public class HttpsSupport {
             //加载证书
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             //从项目目录加入ca根证书
-//            X509Certificate caCert = loadCert(classLoader.getResourceAsStream("ca.crt"));
-
-            X509Certificate caCert = loadCert(classLoader.getResourceAsStream(""));
+            X509Certificate caCert = loadCert(new FileInputStream(ResourceUtils.getFile("classpath:ca.crt")));
             //从项目目录加入ca私钥
-//            PrivateKey caPriKey = loadPriKey(classLoader.getResourceAsStream("ca_private.der"));
-            PrivateKey caPriKey = loadPriKey(classLoader.getResourceAsStream(""));
+            PrivateKey caPriKey = loadPriKey(new FileInputStream(ResourceUtils.getFile("classpath:ca_private.der")));
             setCaPriKey(caPriKey);
             //从证书中获取使用者信息
             setIssuer(getSubjectByCert(caCert));

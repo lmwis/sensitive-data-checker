@@ -11,7 +11,6 @@ import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpRequestDecoder;
 import io.netty.handler.codec.http.HttpResponseEncoder;
-import io.netty.handler.ssl.OptionalSslHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
@@ -46,8 +45,7 @@ public class HttpsNettyServer {
                     @Override
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
                         socketChannel.pipeline()
-                                .addFirst("ssl",new OptionalSslHandler(sslCtx))
-//                                .addLast("ssl",new SslHandler(engine))
+//                                .addFirst("ssl",new OptionalSslHandler(sslCtx))
                                 .addLast("decoder",new HttpRequestDecoder())
                                 .addLast("encoder",new HttpResponseEncoder())
                                 .addLast("aggregator",new HttpObjectAggregator(512*1024))

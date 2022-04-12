@@ -2,8 +2,9 @@ package com.lmwis.datachecker.pratice.proxy.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
-import io.netty.handler.codec.http.HttpObjectAggregator;
+import io.netty.handler.codec.http.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.HttpStatus;
 
 /**
  * @Description: HTTPS处理
@@ -13,28 +14,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class TestHttpsHandler extends ChannelInboundHandlerAdapter {
-//    @Override
-//    protected void channelRead0(ChannelHandlerContext channelHandlerContext, FullHttpRequest fullHttpRequest) throws Exception {
-//        if (StringUtils.equals(INetStringUtil.HTTP_FLAG,INetStringUtil.resolveProtocolFromUrl(fullHttpRequest.uri()))){
-//            channelHandlerContext.fireChannelRead(fullHttpRequest);
-//        }else {
-//
-//        }
-//
-//    }
-
-//    @Override
-//    public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
-//        super.channelReadComplete(ctx);
-//        ctx.flush();
-//    }
-//
-//    @Override
-//    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-//        System.out.println("exceptionCaught");
-//        if (cause != null) cause.printStackTrace();
-//        if (ctx != null) ctx.close();
-//    }
 
 
     @Override
@@ -45,10 +24,17 @@ public class TestHttpsHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         log.debug("[channelRead] msg class:{}",msg.getClass());
-        if (msg instanceof HttpObjectAggregator){
-            HttpObjectAggregator aggregator = (HttpObjectAggregator) msg;
-
-            log.info("[channelRead] msg content:{}",aggregator.toString());
+        if (msg instanceof HttpRequest){
+            HttpRequest req = (HttpRequest) msg;
+            HttpMethod method = req.method();
+            log.info("[channelRead] msg content:{}",req);
+            if (method.equals(HttpMethod.CONNECT)) {
+                // connect请求直接返回
+                HttpResponse response = new DefaultFullHttpResponse(req.protocolVersion(), new HttpResponseStatus(HttpStatus.SC_OK, "Connection Established"));
+                ctx.writeAndFlush(response);
+                return;
+            }
+//            sendToServer();
         }
     }
 

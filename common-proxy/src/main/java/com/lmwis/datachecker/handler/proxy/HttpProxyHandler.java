@@ -2,7 +2,10 @@ package com.lmwis.datachecker.handler.proxy;
 
 import com.lmwis.datachecker.bean.ClientRequest;
 import com.lmwis.datachecker.bean.Constans;
+import com.lmwis.datachecker.bean.FullRequestResponseInfo;
 import com.lmwis.datachecker.handler.response.HttpProxyResponseHandler;
+import com.lmwis.datachecker.pojo.HttpRequestInfo;
+import com.lmwis.datachecker.utils.INetStringUtil;
 import com.lmwis.datachecker.utils.ProxyRequestUtil;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -11,6 +14,12 @@ import io.netty.util.Attribute;
 import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.nio.charset.StandardCharsets;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.lmwis.datachecker.bean.Constans.CLIENTREQUEST_ATTRIBUTE_KEY;
 
@@ -30,8 +39,13 @@ public class HttpProxyHandler extends ChannelInboundHandlerAdapter implements IP
             HttpRequest httpRequest = (HttpRequest) msg;
 
             // 解析存储请求
-            resolveSavedHttpRequest(httpRequest);
-
+            HttpRequestInfo httpRequestInfo = resolveSavedHttpRequest(httpRequest);
+//            Long traceId =  IdUtil.next();
+//            ContextMap.putRequest(traceId,httpRequestInfo);
+            Attribute<FullRequestResponseInfo> attr = ctx.channel().attr(Constans.TRACE_CLIENT);
+            FullRequestResponseInfo info = new FullRequestResponseInfo();
+            info.setRequestInfo(httpRequestInfo);
+            attr.set(info);
             //获取客户端请求
             ClientRequest clientRequest = ProxyRequestUtil.getClientRequest(ctx.channel());
             if (clientRequest == null) {
@@ -107,10 +121,8 @@ public class HttpProxyHandler extends ChannelInboundHandlerAdapter implements IP
                 if (future.isSuccess()) {
                     //连接成功
                     future.channel().writeAndFlush(msg);
-//                    logger.debug("[operationComplete] connect remote server success!");
                 } else {
                     //连接失败
-//                    logger.error("[operationComplete] 连接远程server失败了");
                     ctx.channel().close();
                 }
             }
@@ -122,9 +134,31 @@ public class HttpProxyHandler extends ChannelInboundHandlerAdapter implements IP
 
     }
 
-    private void resolveSavedHttpRequest(HttpRequest httpRequest){
-        System.out.println("--uri: "+httpRequest.uri());
-        System.out.println("--method: "+httpRequest.method());
-        System.out.println("--method: "+httpRequest.headers().getAsString("utf-8"));
+    private HttpRequestInfo resolveSavedHttpRequest(HttpRequest httpRequest){
+        if (httpRequest instanceof FullHttpRequest){
+            FullHttpRequest request = (FullHttpRequest) httpRequest;
+            return convertHttpRequest(request);
+        }
+        return null;
+    }
+    private HttpRequestInfo convertHttpRequest(FullHttpRequest request) {
+        HttpRequestInfo httpInfo = HttpRequestInfo.builder()
+                .protocol("HTTP")
+                .method(request.method().name())
+                .url(request.uri())
+                .content(request.content().toString(StandardCharsets.UTF_8))
+                .hostname(INetStringUtil.resolveHostnameFromUrl(request.uri()))
+                .port(INetStringUtil.resolvePorFromUrl(request.uri()))
+                .gmtCreate(new Date())
+                .gmtModify(new Date())
+                .build();
+        List<Map.Entry<String, String>> entries = request.headers().entries();
+        Map<String, String> headers = new HashMap<>();
+        entries.forEach(k -> {
+            headers.put(k.getKey(), k.getValue());
+        });
+        httpInfo.setHeaders(headers);
+        logger.debug("[saveHttpRequest] debug requestInfo:{}", httpInfo);
+        return httpInfo;
     }
 }

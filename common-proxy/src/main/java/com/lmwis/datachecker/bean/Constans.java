@@ -27,4 +27,6 @@ public class Constans {
      */
     public static final AttributeKey<ClientRequest> CLIENTREQUEST_ATTRIBUTE_KEY = AttributeKey.valueOf("clientRequest");
 
+    public static final AttributeKey<FullRequestResponseInfo> TRACE_CLIENT = AttributeKey.valueOf("traceClient");
+
 }

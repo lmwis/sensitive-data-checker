@@ -46,12 +46,15 @@ public class TestHttpHandler extends ChannelInboundHandlerAdapter {
             if (StringUtils.equals(INetStringUtil.HTTPS_FLAG,INetStringUtil.resolveProtocolFromUrl(fullHttpRequest.uri()))){
                 channelHandlerContext.fireChannelRead(fullHttpRequest);
             }else {
-                HttpRequestInfo requestInfo = convertHttpRequest(channelHandlerContext, fullHttpRequest);
+                HttpRequestInfo requestInfo = convertHttpRequest(fullHttpRequest);
 
                 // 执行代理请求
                 HttpResponseInfo responseInfo = doProxyRequest(requestInfo);
 
                 String originData = responseInfo.getContent();
+                if (originData==null){
+                    return ;
+                }
                 Map<String, String> headers = responseInfo.getHeaders();
                 log.debug("<originResponse> responseInfo:{}", responseInfo);
                 DefaultFullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.valueOf(responseInfo.getHttpVersion()),
@@ -75,7 +78,7 @@ public class TestHttpHandler extends ChannelInboundHandlerAdapter {
      * @return
      * @throws IOException
      */
-    private HttpResponseInfo doProxyRequest(HttpRequestInfo requestInfo) throws IOException {
+    private HttpResponseInfo doProxyRequest(HttpRequestInfo requestInfo) {
         // 拼接时间戳是为了解决当缓存错误数据导致304请求没数据的问题
         String preRequestUrl = requestInfo.getUrl() + "?t=" + new Date().getTime();
         // 通过requestInfo 构建请求的request
@@ -85,12 +88,18 @@ public class TestHttpHandler extends ChannelInboundHandlerAdapter {
                 , requestInfo.getUrl());
         requestInfo.getHeaders().forEach(nRequest::addHeader);
         HttpClient httpClient = HttpClientBuilder.create().build();
-        org.apache.http.HttpResponse oResponse = httpClient.execute(new HttpHost(requestInfo.getHostname(), requestInfo.getPort()), nRequest);
+        org.apache.http.HttpResponse oResponse;
+        try{
+            oResponse = httpClient.execute(new HttpHost(requestInfo.getHostname(), requestInfo.getPort()), nRequest);
+        }catch (IOException e){
+            log.error("[doProxyRequest] invoke http error, msg:{}",e.getMessage());
+            return null;
+        }
         log.debug("[doProxyRequest] nRequest:{}", nRequest);
         return convertHttpResponse(oResponse, requestInfo);
     }
 
-    private HttpResponseInfo convertHttpResponse(org.apache.http.HttpResponse oResponse, HttpRequestInfo requestInfo) throws IOException {
+    private HttpResponseInfo convertHttpResponse(org.apache.http.HttpResponse oResponse, HttpRequestInfo requestInfo)  {
         HttpResponseInfo httpInfo = new HttpResponseInfo(requestInfo);
         Map<String, String> headers = new HashMap<>();
         Arrays.stream(oResponse.getAllHeaders()).forEach(k -> {
@@ -102,13 +111,17 @@ public class TestHttpHandler extends ChannelInboundHandlerAdapter {
         httpInfo.setContent("");
         HttpEntity entity = oResponse.getEntity();
         if (entity!=null){
-            httpInfo.setContent(IOUtils.toString(oResponse.getEntity().getContent(), StandardCharsets.UTF_8));
+            try{
+                httpInfo.setContent(IOUtils.toString(oResponse.getEntity().getContent(), StandardCharsets.UTF_8));
+            }catch (IOException e){
+                log.error("[convertHttpResponse] read content from response occur error , msg:{}",e.getMessage());
+            }
         }
         log.debug("[saveHttpResponse] debug responseInfo:{}", httpInfo);
         return httpInfo;
     }
 
-    private HttpRequestInfo convertHttpRequest(ChannelHandlerContext channelHandlerContext, FullHttpRequest request) {
+    private HttpRequestInfo convertHttpRequest( FullHttpRequest request) {
         HttpRequestInfo httpInfo = HttpRequestInfo.builder()
                 .protocol("HTTP")
                 .method(request.method().name())
