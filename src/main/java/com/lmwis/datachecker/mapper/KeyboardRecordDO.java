@@ -17,7 +17,7 @@ import java.util.Date;
 @TableName("keyboard_record")
 @Data
 @ToString
-public class KeyboardRecord {
+public class KeyboardRecordDO {
 
     @TableId(type = IdType.AUTO)
     Long id;

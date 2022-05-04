@@ -1,6 +1,6 @@
 package com.lmwis.datachecker.service;
 
-import com.lmwis.datachecker.mapper.MouseRecord;
+import com.lmwis.datachecker.mapper.MouseRecordDO;
 
 /**
  * @Description: TODO
@@ -10,7 +10,7 @@ import com.lmwis.datachecker.mapper.MouseRecord;
  */
 public interface MouseRecordService {
 
-    public void insertRecordByTemp(MouseRecord mouseRecord);
+    public void insertRecordByTemp(MouseRecordDO mouseRecord);
 
     int saveTempRecord();
 }

@@ -1,40 +1,30 @@
-package com.lmwis.datachecker.dao;
+package com.lmwis.datachecker.center.dao;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import lombok.ToString;
 
 import java.util.Date;
 
 /**
  * @Description: TODO
  * @Author: lmwis
- * @Data: 2022/4/12 9:52 下午
+ * @Data: 2022/4/30 5:40 下午
  * @Version: 1.0
  */
-@TableName("request_info")
+@TableName("location_info")
 @Data
-@ToString
-public class RequestInfoDO {
+public class LocationInfoDO {
 
     @TableId(type = IdType.AUTO)
     Long id;
 
-    String url;
+    Long uid;
 
-    String hostname;
+    String latitude;
 
-    Integer port;
-
-    String protocol;
-
-    String method;
-
-    String headers;
-
-    String content;
+    String longitude;
 
     Date gmtCreate;
 

@@ -1,7 +1,7 @@
 package com.lmwis.datachecker.computer;
 
 import com.lmwis.datachecker.init.ComputerInfoHolder;
-import com.lmwis.datachecker.mapper.MouseRecord;
+import com.lmwis.datachecker.mapper.MouseRecordDO;
 import com.lmwis.datachecker.service.MouseRecordService;
 import lombok.extern.slf4j.Slf4j;
 import org.jnativehook.mouse.NativeMouseEvent;
@@ -41,7 +41,7 @@ public class MyGlobalMouseListener implements NativeMouseInputListener {
     }
 
     public void nativeMousePressed(NativeMouseEvent e) {
-        MouseRecord mouseRecord = new MouseRecord();
+        MouseRecordDO mouseRecord = new MouseRecordDO();
         mouseRecord.setAction(MOUSE_RECORD_ACTION_PRESSED);
         mouseRecord.setMode(MOUSE_RECORD_MODE_CLICK);
         mouseRecord.setButton(e.getButton());
@@ -53,7 +53,7 @@ public class MyGlobalMouseListener implements NativeMouseInputListener {
     }
 
     public void nativeMouseReleased(NativeMouseEvent e) {
-        MouseRecord mouseRecord = new MouseRecord();
+        MouseRecordDO mouseRecord = new MouseRecordDO();
         mouseRecord.setAction(MOUSE_RECORD_ACTION_RELEASED);
         mouseRecord.setMode(MOUSE_RECORD_MODE_CLICK);
         mouseRecord.setButton(e.getButton());
@@ -64,7 +64,7 @@ public class MyGlobalMouseListener implements NativeMouseInputListener {
     }
 
     public void nativeMouseMoved(NativeMouseEvent e) {
-        MouseRecord mouseRecord = new MouseRecord();
+        MouseRecordDO mouseRecord = new MouseRecordDO();
         mouseRecord.setMode(MOUSE_RECORD_MODE_MOVE);
         mouseRecord.setButton(e.getButton());
         mouseRecord.setX(e.getX());
@@ -76,7 +76,7 @@ public class MyGlobalMouseListener implements NativeMouseInputListener {
     }
 
     public void nativeMouseDragged(NativeMouseEvent e) {
-        MouseRecord mouseRecord = new MouseRecord();
+        MouseRecordDO mouseRecord = new MouseRecordDO();
         mouseRecord.setMode(MOUSE_RECORD_MODE_DRAG);
         mouseRecord.setButton(e.getButton());
         mouseRecord.setX(e.getX());

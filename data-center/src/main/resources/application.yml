@@ -1,0 +1,6 @@
+
+spring:
+  profiles:
+    active: enc
+server:
+  port: 9001

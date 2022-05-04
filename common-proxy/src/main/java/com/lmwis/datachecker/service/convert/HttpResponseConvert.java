@@ -20,8 +20,6 @@ public interface HttpResponseConvert {
     @Mappings({
             @Mapping(target = "headers"
                     ,expression = "java(com.lmwis.datachecker.utils.GsonUtil.toJson(responseInfo.getHeaders()))"),
-            @Mapping(target = "requestInfoId"
-            ,expression = "java(responseInfo.requestInfo.id)")
     })
     ResponseInfoDO toResponseInfoDO(HttpResponseInfo responseInfo);
 

@@ -1,7 +1,7 @@
 package com.lmwis.datachecker.computer;
 
 import com.lmwis.datachecker.init.ComputerInfoHolder;
-import com.lmwis.datachecker.mapper.KeyboardRecord;
+import com.lmwis.datachecker.mapper.KeyboardRecordDO;
 import com.lmwis.datachecker.service.KeyboardRecordService;
 import lombok.extern.slf4j.Slf4j;
 import org.jnativehook.keyboard.NativeKeyEvent;
@@ -39,7 +39,7 @@ public class MyGlobalKeyListener implements NativeKeyListener {
     }
 
     private void packAndSaveKeyboardObject(NativeKeyEvent nativeKeyEvent, int keyboardActionPressed) {
-        KeyboardRecord keyboardRecord = new KeyboardRecord();
+        KeyboardRecordDO keyboardRecord = new KeyboardRecordDO();
         keyboardRecord.setKeyText(NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode()));
         keyboardRecord.setKeyCode(nativeKeyEvent.getKeyCode());
         keyboardRecord.setOwnerId(computerInfoHolder.getMyComputerInfo().getId());

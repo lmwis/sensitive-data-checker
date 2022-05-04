@@ -1,6 +1,6 @@
 package com.lmwis.datachecker.service;
 
-import com.lmwis.datachecker.mapper.MouseRecord;
+import com.lmwis.datachecker.mapper.MouseRecordDO;
 import com.lmwis.datachecker.mapper.MouseRecordMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class MouseRecordServiceImpl implements MouseRecordService {
 
     private final MouseRecordMapper mouseRecordMapper;
 
-    private final List<MouseRecord> lists = new ArrayList<>();
+    private final List<MouseRecordDO> lists = new ArrayList<>();
 
     private final double threshold = 20;
 
@@ -28,7 +28,7 @@ public class MouseRecordServiceImpl implements MouseRecordService {
         this.mouseRecordMapper = mouseRecordMapper;
     }
 
-    public void insertRecordByTemp(MouseRecord mouseRecord) {
+    public void insertRecordByTemp(MouseRecordDO mouseRecord) {
         if (lists.size() > threshold) {
             doInsertRecord();
         } else {
@@ -37,20 +37,20 @@ public class MouseRecordServiceImpl implements MouseRecordService {
     }
 
     private int doInsertRecord() {
-        List<MouseRecord> o = new ArrayList<>(lists);
+        List<MouseRecordDO> o = new ArrayList<>(lists);
         lists.removeAll(o);
         int insert = 0;
         try {
-            for (MouseRecord k : o) {
+            for (MouseRecordDO k : o) {
 //                log.info("do save record " + k);
                 insert += mouseRecordMapper.insert(k);
             }
         } catch (Exception e) {
             log.error("数据库写入失败：" + e.getMessage());
             // 失败将已经写入的数据进行删除
-            List<MouseRecord> temp = new ArrayList<>();
-            for (MouseRecord k : o) {
-                MouseRecord mouseRecord = mouseRecordMapper.selectById(k.getId());
+            List<MouseRecordDO> temp = new ArrayList<>();
+            for (MouseRecordDO k : o) {
+                MouseRecordDO mouseRecord = mouseRecordMapper.selectById(k.getId());
                 // 表示未被写入
                 if (mouseRecord==null){
                     temp.add(k);

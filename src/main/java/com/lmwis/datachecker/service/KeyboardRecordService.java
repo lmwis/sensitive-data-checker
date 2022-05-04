@@ -1,8 +1,6 @@
 package com.lmwis.datachecker.service;
 
-import com.lmwis.datachecker.mapper.KeyboardRecord;
-
-import java.util.List;
+import com.lmwis.datachecker.mapper.KeyboardRecordDO;
 
 /**
  * @Description: TODO
@@ -12,7 +10,7 @@ import java.util.List;
  */
 public interface KeyboardRecordService {
 
-    public void insertRecordByTemp(KeyboardRecord keyboardRecord);
+    void insertRecordByTemp(KeyboardRecordDO keyboardRecord);
 
     int saveTempRecord();
 }

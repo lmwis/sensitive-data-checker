@@ -1,6 +1,6 @@
 package com.lmwis.datachecker.service;
 
-import com.lmwis.datachecker.mapper.KeyboardRecord;
+import com.lmwis.datachecker.mapper.KeyboardRecordDO;
 import com.lmwis.datachecker.mapper.KeyboardRecordMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class KeyboardRecordServiceImpl implements KeyboardRecordService {
 
     private final KeyboardRecordMapper keyboardRecordMapper;
 
-    private final List<KeyboardRecord> lists = new ArrayList<>();
+    private final List<KeyboardRecordDO> lists = new ArrayList<>();
 
     private final double threshold = 20;
 
@@ -28,7 +28,7 @@ public class KeyboardRecordServiceImpl implements KeyboardRecordService {
         this.keyboardRecordMapper = keyboardRecordMapper;
     }
 
-    public void insertRecordByTemp(KeyboardRecord keyboardRecord) {
+    public void insertRecordByTemp(KeyboardRecordDO keyboardRecord) {
         if (lists.size() > threshold) {
             doInsertRecord();
         } else {
@@ -37,20 +37,20 @@ public class KeyboardRecordServiceImpl implements KeyboardRecordService {
     }
 
     private int doInsertRecord() {
-        List<KeyboardRecord> o = new ArrayList<>(lists);
+        List<KeyboardRecordDO> o = new ArrayList<>(lists);
         lists.removeAll(o);
         int insert = 0;
         try {
-            for (KeyboardRecord k : o) {
+            for (KeyboardRecordDO k : o) {
 //                log.info("do save record " + k);
                 insert += keyboardRecordMapper.insert(k);
             }
         } catch (Exception e) {
             log.error("数据库写入失败：" + e.getMessage());
             // 失败将已经写入的数据进行删除
-            List<KeyboardRecord> temp = new ArrayList<>();
-            for (KeyboardRecord k : o) {
-                KeyboardRecord keyboardRecord = keyboardRecordMapper.selectById(k.getId());
+            List<KeyboardRecordDO> temp = new ArrayList<>();
+            for (KeyboardRecordDO k : o) {
+                KeyboardRecordDO keyboardRecord = keyboardRecordMapper.selectById(k.getId());
                 // 表示未被写入
                 if (keyboardRecord==null){
                     temp.add(k);

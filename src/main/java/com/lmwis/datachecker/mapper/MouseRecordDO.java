@@ -17,7 +17,7 @@ import java.util.Date;
 @Data
 @TableName("mouse_record")
 @ToString
-public class MouseRecord {
+public class MouseRecordDO {
 
     @TableId(type = IdType.AUTO)
     Long id;

@@ -1,5 +1,7 @@
 package com.lmwis.datachecker.service.impl;
 
+import com.lmwis.datachecker.dao.RequestInfoDO;
+import com.lmwis.datachecker.dao.ResponseInfoDO;
 import com.lmwis.datachecker.dao.mapper.RequestInfoDOMapper;
 import com.lmwis.datachecker.dao.mapper.ResponseInfoDOMapper;
 import com.lmwis.datachecker.pojo.HttpRequestInfo;
@@ -32,8 +34,11 @@ public class NetInfoServiceImpl implements NetInfoService {
             return false;
         }
 
-        int insert = requestInfoDOMapper.insert(HttpRequestConvert.CONVERT.toRequestInfoDO(requestInfo));
-        int insert1 = responseInfoDOMapper.insert(HttpResponseConvert.CONVERT.toResponseInfoDO(responseInfo));
+        RequestInfoDO requestInfoDO = HttpRequestConvert.CONVERT.toRequestInfoDO(requestInfo);
+        int insert = requestInfoDOMapper.insert(requestInfoDO);
+        ResponseInfoDO responseInfoDO = HttpResponseConvert.CONVERT.toResponseInfoDO(responseInfo);
+        responseInfoDO.setRequestInfoId(requestInfoDO.getId());
+        int insert1 = responseInfoDOMapper.insert(responseInfoDO);
 
         return insert > 0 | insert1>0;
 //        return true;
