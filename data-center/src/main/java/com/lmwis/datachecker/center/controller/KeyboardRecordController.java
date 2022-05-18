@@ -32,19 +32,9 @@ public class KeyboardRecordController extends BaseController {
         if (!validateNull(keyboardRecordDTO)){
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
         }
-        log.info("[saveKeyboardRecord] receive data:{}", keyboardRecordDTO);
+//        log.info("[saveKeyboardRecord] receive data:{}", keyboardRecordDTO);
         return CommonReturnType.create(keyboardRecordAppService.insertRecordByTemp(keyboardRecordDTO));
     }
-//    @PostMapping(value = "",produces = MediaType.APPLICATION_JSON_VALUE)
-//    public FeheadResponse saveKeyboardRecord( String content) throws BusinessException {
-//
-//        if (!validateNull(content)){
-//            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
-//        }
-//        KeyboardRecordDTO keyboardRecordDTO = GsonUtil.readObject(content,KeyboardRecordDTO.class);
-//        log.info("[saveKeyboardRecord] receive data:{}", keyboardRecordDTO);
-//        return CommonReturnType.create(keyboardRecordAppService.insertRecordByTemp(keyboardRecordDTO));
-//    }
     @GetMapping("/{id}")
     public FeheadResponse selectKeyBoardById(@PathVariable Long id) throws BusinessException {
         if (!validateNull(id)){

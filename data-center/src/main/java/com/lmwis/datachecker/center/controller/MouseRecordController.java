@@ -31,7 +31,7 @@ public class MouseRecordController extends BaseController {
         if (!validateNull(mouseRecordDTO)){
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
         }
-        log.info("[saveMouseRecord] revive data:{}", mouseRecordDTO);
+//        log.info("[saveMouseRecord] revive data:{}", mouseRecordDTO);
         return CommonReturnType.create(mouseRecordAppService.insertRecordByTemp(mouseRecordDTO));
     }
 
