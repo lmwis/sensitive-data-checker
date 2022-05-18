@@ -3,7 +3,7 @@ package com.lmwis.datachecker.center.app.impl;
 import com.fehead.lang.error.BusinessException;
 import com.fehead.lang.error.EmBusinessError;
 import com.lmwis.datachecker.center.app.LocationInfoAppService;
-import com.lmwis.datachecker.center.compoment.UserContext;
+import com.lmwis.datachecker.center.compoment.UserContextHolder;
 import com.lmwis.datachecker.center.convert.LocationInfoConvert;
 import com.lmwis.datachecker.center.dao.LocationInfoDO;
 import com.lmwis.datachecker.center.dao.mapper.LocationInfoMapper;
@@ -27,6 +27,8 @@ public class LocationInfoAppServiceImpl implements LocationInfoAppService {
 
     final LocationInfoMapper locationInfoMapper;
 
+    final UserContextHolder userContextHolder;
+
     @Override
     public boolean saveLocationInfo(LocationInfoDTO dto) throws BusinessException {
         if (!locationDtoValid(dto)){
@@ -35,7 +37,7 @@ public class LocationInfoAppServiceImpl implements LocationInfoAppService {
 
         LocationInfoDO locationInfoDO = LocationInfoConvert.CONVERT.convertToDO(dto);
 
-        locationInfoDO.setUid(UserContext.getCurrentUid());
+        locationInfoDO.setUid(userContextHolder.getCurrentUid());
         locationInfoDO.setGmtCreate(new Date());
         locationInfoDO.setGmtModify(new Date());
 

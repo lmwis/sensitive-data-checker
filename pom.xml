@@ -8,6 +8,8 @@
         <module>common-proxy</module>
         <module>netty-test</module>
         <module>data-center</module>
+        <module>computer-record</module>
+        <module>business-common</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -36,6 +38,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.lmwis.datachecker</groupId>
+                <artifactId>business-common</artifactId>
+                <version>${version}</version>
+            </dependency>
             <!--connector-->
             <dependency>
                 <groupId>mysql</groupId>
