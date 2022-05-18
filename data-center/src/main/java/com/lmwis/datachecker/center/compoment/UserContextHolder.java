@@ -3,7 +3,7 @@ package com.lmwis.datachecker.center.compoment;
 import com.fehead.lang.util.GsonUtil;
 import com.lmwis.datachecker.center.app.UserBaseAppService;
 import com.lmwis.datachecker.center.dao.UserBaseDO;
-import com.lmwis.datachecker.common.config.CommonConfigProperties;
+import com.lmwis.datachecker.common.perperties.CommonConfigProperties;
 import com.lmwis.datachecker.common.error.BusinessErrorEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
