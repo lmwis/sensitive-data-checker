@@ -11,7 +11,16 @@ import com.fehead.lang.error.CommonError;
 public enum BusinessErrorEnum implements CommonError {
 
 
+    /**
+     * 9开头为用户相关
+     */
     USER_TOKEN_PARAM_INVALID(90001, "用户token参数无效"),
+
+
+    /**
+     * 8开头为app使用情况相关
+     */
+    USER_APP_BASE_ALREADY_EXIST(80001, "用户app已经存在"),
     ;
 
     BusinessErrorEnum(int errCode, String errMsg) {

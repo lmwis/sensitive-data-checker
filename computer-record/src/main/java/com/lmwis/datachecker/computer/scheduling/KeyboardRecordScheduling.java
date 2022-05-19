@@ -18,7 +18,7 @@ public class KeyboardRecordScheduling {
     final KeyboardRecordService keyboardRecordService;
     final MouseRecordService mouseRecordService;
 
-    public KeyboardRecordScheduling(KeyboardRecordService keyboardRecordService,MouseRecordService mouseRecordService){
+    public KeyboardRecordScheduling(KeyboardRecordService keyboardRecordService, MouseRecordService mouseRecordService){
         this.keyboardRecordService = keyboardRecordService;
         this.mouseRecordService = mouseRecordService;
         new Thread(new KeyboardRecordSchedulingTask(keyboardRecordService,mouseRecordService)).run();
@@ -44,9 +44,8 @@ public class KeyboardRecordScheduling {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                int count = keyboardRecordService.saveTempRecord();
+                keyboardRecordService.saveTempRecord();
                 mouseRecordService.saveTempRecord();
-//                log.info("定时任务写入缓存，count="+count);
             }
         }
 

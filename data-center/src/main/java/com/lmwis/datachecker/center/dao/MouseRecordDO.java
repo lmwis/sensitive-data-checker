@@ -1,7 +1,6 @@
 package com.lmwis.datachecker.center.dao;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
@@ -22,6 +21,8 @@ public class MouseRecordDO {
 
     @TableId(type = IdType.AUTO)
     Long id;
+
+    Long uid;
 
     /**
      * 1-move
@@ -52,9 +53,6 @@ public class MouseRecordDO {
      * 2-released
      */
     Integer action;
-
-    @TableField("owner_id")
-    Long uid;
 
     Date gmtCreate;
 

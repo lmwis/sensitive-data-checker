@@ -23,7 +23,7 @@ public class KeyboardRecordDO {
     @TableId(type = IdType.AUTO)
     Long id;
 
-    @TableField("owner_id")
+    @TableField("uid")
     Long uid;
 
     String keyText;
