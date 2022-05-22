@@ -2,7 +2,7 @@ package com.lmwis.datachecker.center.app;
 
 import com.fehead.lang.error.BusinessException;
 import com.lmwis.datachecker.center.dao.AppBaseDO;
-import com.lmwis.datachecker.center.pojo.AppBaseDTO;
+import com.lmwis.datachecker.center.pojo.BatchInitAppBaseDTO;
 
 /**
  * @Description: TODO
@@ -11,5 +11,8 @@ import com.lmwis.datachecker.center.pojo.AppBaseDTO;
  * @Version: 1.0
  */
 public interface AppBaseAppService {
-    AppBaseDO uploadAppBase(AppBaseDTO appBaseDTO) throws BusinessException;
+
+    boolean batchInitAppBase(BatchInitAppBaseDTO batchInitAppBaseDTO) throws BusinessException;
+
+    AppBaseDO selectAppBaseDOByPackageName(String packageName);
 }

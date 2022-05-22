@@ -18,4 +18,7 @@ public interface ImageAppService {
      * @return
      */
     String saveFile(MultipartFile file) throws BusinessException;
+
+    String saveStringFile(String file) throws BusinessException;
+
 }

@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/file")
 @AllArgsConstructor
-public class ImageController extends BaseController {
+public class FileController extends BaseController {
 
     final ImageAppService imageAppService;
 
@@ -45,6 +45,19 @@ public class ImageController extends BaseController {
 
         //将链接保存到URL中
         String urlPath = imageAppService.saveFile(file);
+        return CommonReturnType.create(urlPath);
+
+    }
+
+    @PostMapping("/string")
+    public CommonReturnType uploadFileString(String file) throws BusinessException {
+
+        if (!validateNull(file)) {
+            throw new BusinessException(EmBusinessError.UPLOAD_FILE_EMPTY);
+        }
+//        logger.info("[uploadFileString] receive data :{}",file);
+        //将链接保存到URL中
+        String urlPath = imageAppService.saveStringFile(file);
         return CommonReturnType.create(urlPath);
 
     }

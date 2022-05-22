@@ -4,33 +4,35 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import lombok.ToString;
 
 import java.util.Date;
 
 /**
  * @Description: TODO
  * @Author: lmwis
- * @Data: 2022/5/19 1:27 下午
+ * @Data: 2022/5/21 6:42 下午
  * @Version: 1.0
  */
+@TableName("usage_event_temp")
 @Data
-@ToString
-@TableName("app_base")
-public class AppBaseDO {
+public class UsageEventDO {
 
     @TableId(type = IdType.AUTO)
     Long id;
 
     Long uid;
 
-    String name;
-
-    String version;
-
-    String pictureUrl;
+    Long appId;
 
     String packageName;
+
+    /**
+     * 1 - 移至前台
+     * 2 - 移至后台
+     */
+    int eventType;
+
+    Date timeStamp;
 
     Date gmtCreate;
 

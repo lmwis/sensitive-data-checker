@@ -63,9 +63,9 @@ public class DataCenterClient {
             response = httpClient.execute(httpPost);
             // 请求成功
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
-                CommonReturnType commonReturnType = GsonUtil.readObject(readResponseBody(response), CommonReturnType.class);
+                CommonReturnType commonReturnType = objectMapper.readValue(readResponseBody(response), CommonReturnType.class);
                 if (commonReturnType.getData()!=null){
-                    res = GsonUtil.readObject(commonReturnType.getData().toString(),MyComputerInfo.class);
+                    res = objectMapper.readValue(commonReturnType.getData().toString(),MyComputerInfo.class);
                 }
             }
         }catch (IOException e){
@@ -83,7 +83,7 @@ public class DataCenterClient {
             response = httpClient.execute(httpPost);
             // 请求成功
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
-                CommonReturnType commonReturnType = GsonUtil.readObject(readResponseBody(response), CommonReturnType.class);
+                CommonReturnType commonReturnType = objectMapper.readValue(readResponseBody(response), CommonReturnType.class);
                 if (commonReturnType.getData()!=null){
                     res = (int)Double.parseDouble(commonReturnType.getData().toString());
                 }
@@ -100,7 +100,7 @@ public class DataCenterClient {
         KeyboardRecordDO keyboardRecordDO = null;
         try {
             HttpResponse response = httpClient.execute(httpGet);
-            CommonReturnType commonReturnType = GsonUtil.readObject(readResponseBody(response), CommonReturnType.class);
+            CommonReturnType commonReturnType = objectMapper.readValue(readResponseBody(response), CommonReturnType.class);
             if (commonReturnType.getData()!=null){
                 keyboardRecordDO = (KeyboardRecordDO)commonReturnType.getData();
             }
@@ -120,7 +120,7 @@ public class DataCenterClient {
             response = httpClient.execute(httpPost);
             // 请求成功
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
-                CommonReturnType commonReturnType = GsonUtil.readObject(readResponseBody(response), CommonReturnType.class);
+                CommonReturnType commonReturnType = objectMapper.readValue(readResponseBody(response), CommonReturnType.class);
                 if (commonReturnType.getData()!=null){
                     res = (int)Double.parseDouble(commonReturnType.getData().toString());
                 }
@@ -137,7 +137,7 @@ public class DataCenterClient {
         MouseRecordDO mouseRecordDO = null;
         try {
             HttpResponse response = httpClient.execute(httpGet);
-            mouseRecordDO = GsonUtil.readObject(readResponseBody(response), MouseRecordDO.class);
+            mouseRecordDO = objectMapper.readValue(readResponseBody(response), MouseRecordDO.class);
         } catch (IOException e) {
             e.printStackTrace();
         }

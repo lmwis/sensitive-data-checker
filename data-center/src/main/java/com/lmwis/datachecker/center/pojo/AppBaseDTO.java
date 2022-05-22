@@ -23,7 +23,5 @@ public class AppBaseDTO implements Serializable {
 
     String packageName;
 
-    long gmtCreate;
-
-    long gmtModified;
+    String version;
 }
