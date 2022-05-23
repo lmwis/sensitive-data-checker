@@ -68,6 +68,11 @@ public class AppBaseAppServiceImpl implements AppBaseAppService {
         return appBaseDOMapper.selectOne(queryWrapper);
     }
 
+    @Override
+    public AppBaseDO selectById(long id) {
+        return appBaseDOMapper.selectById(id);
+    }
+
     private boolean verifyDTO(AppBaseDTO appBaseDTO){
         if (StringUtils.isBlank(appBaseDTO.getName()) ||
         StringUtils.isBlank(appBaseDTO.getPackageName()) ||

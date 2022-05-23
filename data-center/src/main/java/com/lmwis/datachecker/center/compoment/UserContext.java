@@ -1,5 +1,7 @@
 package com.lmwis.datachecker.center.compoment;
 
+import com.lmwis.datachecker.center.dao.UserBaseDO;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
@@ -9,14 +11,14 @@ import lombok.Data;
  * @Version: 1.0
  */
 @Data
+@AllArgsConstructor
 public class UserContext {
 
-    private String token;
+    final private String token;
 
-    private long uid;
+    final private long uid;
 
-    protected UserContext(String token, long id) {
-        this.token = token;
-        this.uid = id;
-    }
+    final private UserBaseDO userBaseDO;
+
+
 }

@@ -15,4 +15,6 @@ public interface AppBaseAppService {
     boolean batchInitAppBase(BatchInitAppBaseDTO batchInitAppBaseDTO) throws BusinessException;
 
     AppBaseDO selectAppBaseDOByPackageName(String packageName);
+
+    AppBaseDO selectById(long id);
 }

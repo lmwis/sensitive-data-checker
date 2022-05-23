@@ -1,10 +1,13 @@
 package com.lmwis.datachecker.center.app.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fehead.lang.error.BusinessException;
 import com.fehead.lang.error.EmBusinessError;
 import com.lmwis.datachecker.center.app.AppBaseAppService;
 import com.lmwis.datachecker.center.app.AppUsageService;
 import com.lmwis.datachecker.center.compoment.UserContextHolder;
+import com.lmwis.datachecker.center.constant.BatchQueryAppTimeMode;
+import com.lmwis.datachecker.center.constant.UsageEventType;
 import com.lmwis.datachecker.center.convert.AppUsageConvert;
 import com.lmwis.datachecker.center.convert.UsageEventConvert;
 import com.lmwis.datachecker.center.dao.AppBaseDO;
@@ -12,13 +15,15 @@ import com.lmwis.datachecker.center.dao.AppUsagesDO;
 import com.lmwis.datachecker.center.dao.UsageEventDO;
 import com.lmwis.datachecker.center.dao.mapper.AppUsageDOMapper;
 import com.lmwis.datachecker.center.dao.mapper.UsageEventDOMapper;
-import com.lmwis.datachecker.center.pojo.BatchUploadAppUsagesDTO;
-import com.lmwis.datachecker.center.pojo.BatchUploadUsageEventDTO;
+import com.lmwis.datachecker.center.pojo.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
 
 /**
  * @Description: TODO
@@ -38,6 +43,8 @@ public class AppUsageServiceImpl implements AppUsageService {
     final UserContextHolder userContextHolder;
 
     final AppBaseAppService appBaseAppService;
+
+    final int MAX_DIF_TIME_MS = 2000;
 
     @Override
     public boolean updateAppUsage(BatchUploadAppUsagesDTO batchUploadAppUsagesDTO) throws BusinessException {
@@ -96,7 +103,149 @@ public class AppUsageServiceImpl implements AppUsageService {
 
         return true;
     }
+    private void fixData(){
+        log.info("[fixData] 开始 修复数据");
+        List<UsageEventDO> usageEventDOS = usageEventDOMapper.selectList(null);
+        usageEventDOS.forEach(k->{
+            AppBaseDO appBaseDO = appBaseAppService.selectAppBaseDOByPackageName(k.getPackageName());
+            if (!k.getAppId().equals(appBaseDO.getId())){
+                k.setAppId(appBaseDO.getId());
+                usageEventDOMapper.updateById(k);
+            }
+        });
 
+        List<AppUsagesDO> appUsagesDOS = appUsageDOMapper.selectList(null);
+        appUsagesDOS.forEach(k->{
+            AppBaseDO appBaseDO = appBaseAppService.selectAppBaseDOByPackageName(k.getPackageName());
+            if (!k.getAppId().equals(appBaseDO.getId())){
+                k.setAppId(appBaseDO.getId());
+                appUsageDOMapper.updateById(k);
+            }
+
+        });
+        log.info("[fixData] fix success");
+    }
+    @Override
+    public BatchQueryUsageEventResult batchQueryUsageEventRangeTime(BatchQueryUsageEventDTO batchQueryUsageEventDTO) {
+
+//        fixData();
+
+        long endTime = System.currentTimeMillis();
+        // 默认读一小时
+        long starTime = 0;
+        if (batchQueryUsageEventDTO.getMode() == BatchQueryAppTimeMode.CUSTOMIZE.getCode()){
+            starTime = batchQueryUsageEventDTO.getStartTime();
+            endTime = batchQueryUsageEventDTO.getEndTime();
+        }else {
+            starTime = convertEndTimeFromMode(batchQueryUsageEventDTO.getMode(), endTime);
+        }
+
+        QueryWrapper<UsageEventDO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.between("time_stamp",new Date(starTime), new Date(endTime));
+        queryWrapper.orderByAsc("time_stamp");
+        List<UsageEventDO> usageEventDOS = usageEventDOMapper.selectList(queryWrapper);
+        log.info("[batchQueryUsageEventRangeTime] usageEventDOS size:{}",usageEventDOS.size());
+
+        BatchQueryUsageEventResult result = new BatchQueryUsageEventResult();
+
+        dealSideData(usageEventDOS);
+
+        result.setList(resolveAppUsageResultList(usageEventDOS));
+        result.setStartTime(starTime);
+        result.setEndTime(endTime);
+        return result;
+    }
+
+    private void dealSideData(List<UsageEventDO> usageEventDOS){
+        // 处理不合理的头尾数据
+        UsageEventDO head = usageEventDOS.get(0);
+        if (head.getEventType() == UsageEventType.TO_BACK.getCode()){
+            QueryWrapper<UsageEventDO> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("package_name",head.getPackageName());
+            queryWrapper.eq("event_type",UsageEventType.TO_FRONT.getCode());
+            // 小于
+            queryWrapper.lt("time_stamp",head.getTimeStamp());
+            queryWrapper.orderByDesc("time_stamp");
+            queryWrapper.last("limit 1");
+            UsageEventDO headAppend = usageEventDOMapper.selectOne(queryWrapper);
+            // 如果不存在 为了保证数据一致性删掉这个
+            if (headAppend == null){
+                usageEventDOS.remove(0);
+            }else {
+                usageEventDOS.add(0,headAppend);
+            }
+
+        }
+        UsageEventDO tail = usageEventDOS.get(usageEventDOS.size()-1);
+        if (tail.getEventType() == UsageEventType.TO_FRONT.getCode()){
+            QueryWrapper<UsageEventDO> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("package_name",tail.getPackageName());
+            queryWrapper.eq("event_type",UsageEventType.TO_BACK.getCode());
+            // 大于
+            queryWrapper.gt("time_stamp",tail.getTimeStamp());
+            queryWrapper.orderByAsc("time_stamp");
+            queryWrapper.last("limit 1");
+            UsageEventDO tailAppend = usageEventDOMapper.selectOne(queryWrapper);
+            // 如果不存在 为了保证数据一致性删掉这个
+            if (tailAppend == null){
+                usageEventDOS.remove(usageEventDOS.size()-1);
+            }else {
+                usageEventDOS.add(tailAppend);
+            }
+        }
+    }
+
+    /**
+     * 解析为展示的格式
+     * @param usageEventDOS
+     * @return
+     */
+    private List<AppUsageResult> resolveAppUsageResultList(List<UsageEventDO> usageEventDOS){
+        List<AppUsageResult> results = new ArrayList<>();
+        UsageEventDO lastEvent = null;
+        AppUsageResult appUsageResult = new AppUsageResult();
+        for (UsageEventDO k : usageEventDOS) {
+            if (lastEvent == null || !k.getAppId().equals(lastEvent.getAppId())){
+                // 保存上次事件
+                if (lastEvent!=null){
+                    appUsageResult.setContinueTime(k.getTimeStamp().getTime() - appUsageResult.getStartTime());
+                    results.add(appUsageResult);
+                }
+                // 新事件
+                appUsageResult = new AppUsageResult();
+                appUsageResult.setAppInfo(appBaseAppService.selectById(k.getAppId()));
+                appUsageResult.setStartTime(k.getTimeStamp().getTime());
+            }else {
+                // 相同应用
+                if (k.getEventType() == UsageEventType.TO_FRONT.getCode()){
+                    // 切出去和切回来的时间间隔超过2s
+                    if ((k.getTimeStamp().getTime() - lastEvent.getTimeStamp().getTime())>=MAX_DIF_TIME_MS){
+                        // 拆开记录
+                        appUsageResult.setContinueTime(k.getTimeStamp().getTime() - appUsageResult.getStartTime());
+                        results.add(appUsageResult);
+
+                        // 新事件
+                        appUsageResult = new AppUsageResult();
+                        appUsageResult.setAppInfo(appBaseAppService.selectById(k.getAppId()));
+                        appUsageResult.setStartTime(k.getTimeStamp().getTime());
+                    }
+                }
+
+            }
+
+            lastEvent = k;
+        }
+
+        return results;
+    }
+    private long convertEndTimeFromMode(int mode , long now){
+        if(mode == BatchQueryAppTimeMode.CURRENT_DAY.getCode()){
+            // 当天12点
+            return now-(now+ TimeZone.getDefault().getRawOffset())%(1000*3600*24);
+
+        }
+        return now - 1000*60*60;
+    }
     private void convertDateTime(){
 
     }

@@ -5,6 +5,7 @@ import com.lmwis.datachecker.center.app.UserBaseAppService;
 import com.lmwis.datachecker.center.dao.UserBaseDO;
 import com.lmwis.datachecker.common.perperties.CommonConfigProperties;
 import com.lmwis.datachecker.common.error.BusinessErrorEnum;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class UserContextHolder {
 
+    @Getter
     UserContext userContext;
 
     final UserBaseAppService userBaseAppService;
@@ -33,7 +35,7 @@ public class UserContextHolder {
     private void init(){
         if (commonConfigProperties.getUser().isUnTokenMode()){
             // 默认user
-            this.userContext = new UserContext("11111",2);
+            this.userContext = new UserContext("11111",2,null);
             return;
         }
         String token = commonConfigProperties.getUser().getToken();
@@ -44,7 +46,7 @@ public class UserContextHolder {
         if (userBaseDO == null){
             throw new IllegalArgumentException(BusinessErrorEnum.USER_TOKEN_PARAM_INVALID.getErrorMsg());
         }
-        this.userContext = new UserContext(token, userBaseDO.getId());
+        this.userContext = new UserContext(token, userBaseDO.getId(),userBaseDO);
         log.info("[UserContextHolder.init] success load user:{}", GsonUtil.toString(this.userContext));
     }
     public boolean verify(String token){

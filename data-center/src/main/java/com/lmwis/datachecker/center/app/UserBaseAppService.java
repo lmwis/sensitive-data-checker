@@ -2,6 +2,7 @@ package com.lmwis.datachecker.center.app;
 
 import com.fehead.lang.error.BusinessException;
 import com.lmwis.datachecker.center.dao.UserBaseDO;
+import com.lmwis.datachecker.center.pojo.UserLoginDTO;
 
 /**
  * @Description: TODO
@@ -18,4 +19,8 @@ public interface UserBaseAppService {
     UserBaseDO getUserBaseByName(String username) throws BusinessException;
 
     boolean newUser(String username) throws BusinessException;
+
+    UserBaseDO login(UserLoginDTO userLoginDTO) throws BusinessException;
+
+//    UserBaseDO getCurrentUserInfo();
 }

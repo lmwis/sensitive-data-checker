@@ -7,14 +7,12 @@ import com.fehead.lang.response.CommonReturnType;
 import com.lmwis.datachecker.center.app.AppBaseAppService;
 import com.lmwis.datachecker.center.app.AppUsageService;
 import com.lmwis.datachecker.center.pojo.BatchInitAppBaseDTO;
+import com.lmwis.datachecker.center.pojo.BatchQueryUsageEventDTO;
 import com.lmwis.datachecker.center.pojo.BatchUploadAppUsagesDTO;
 import com.lmwis.datachecker.center.pojo.BatchUploadUsageEventDTO;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Description: TODO
@@ -59,5 +57,15 @@ public class AppUsageController extends BaseController {
         logger.info("[batchUploadUsagesEvent] receive data size:{}", batchUploadUsageEventDTO.getList().size());
         return CommonReturnType.create(appUsageService.updateUsageEvent(batchUploadUsageEventDTO));
 
+    }
+
+    @GetMapping(value = "/event")
+    public CommonReturnType batchQueryAppUsageEventRangTime(@RequestBody BatchQueryUsageEventDTO batchQueryUsageEventDTO) throws BusinessException {
+        if (!validateNull(batchQueryUsageEventDTO)){
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+        }
+        logger.info("[batchQueryAppUsageEventRangTime] batch query param:{}", batchQueryUsageEventDTO);
+
+        return CommonReturnType.create(appUsageService.batchQueryUsageEventRangeTime(batchQueryUsageEventDTO));
     }
 }

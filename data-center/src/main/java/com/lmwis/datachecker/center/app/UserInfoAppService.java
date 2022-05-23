@@ -12,5 +12,6 @@ import com.lmwis.datachecker.center.pojo.MyComputerInfoDTO;
  */
 public interface UserInfoAppService {
 
-    public MyComputerInfo uploadComputer(MyComputerInfoDTO myComputerInfo) throws BusinessException;
+    MyComputerInfo uploadComputer(MyComputerInfoDTO myComputerInfo) throws BusinessException;
+
 }

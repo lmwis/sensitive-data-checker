@@ -6,8 +6,10 @@ import com.fehead.lang.error.BusinessException;
 import com.fehead.lang.error.EmBusinessError;
 import com.fehead.lang.util.LongUtil;
 import com.lmwis.datachecker.center.app.UserBaseAppService;
+import com.lmwis.datachecker.center.compoment.UserContextHolder;
 import com.lmwis.datachecker.center.dao.UserBaseDO;
 import com.lmwis.datachecker.center.dao.mapper.UserBaseMapper;
+import com.lmwis.datachecker.center.pojo.UserLoginDTO;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,7 @@ public class UserBaseAppServiceImpl implements UserBaseAppService {
     final UserBaseMapper userBaseMapper;
 
     final StringIdGenerator stringIdGenerator;
+
 
     @Override
     public UserBaseDO getUserBaseById(long id) {
@@ -70,4 +73,23 @@ public class UserBaseAppServiceImpl implements UserBaseAppService {
         newUser.setGmtModified(now);
         return userBaseMapper.insert(newUser)>0;
     }
+
+    @Override
+    public UserBaseDO login(UserLoginDTO userLoginDTO) throws BusinessException {
+        if (StringUtils.isBlank(userLoginDTO.getUsername()) || StringUtils.isBlank(userLoginDTO.getToken())){
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+        }
+        UserBaseDO userBaseByName = this.getUserBaseByName(userLoginDTO.getUsername());
+        if (userBaseByName!=null && StringUtils.equals(userBaseByName.getToken(),userLoginDTO.getToken())){
+            return userBaseByName;
+        }else {
+            throw new BusinessException(EmBusinessError.USER_LOGIN_FAIL);
+        }
+
+    }
+
+//    @Override
+//    public UserBaseDO getCurrentUserInfo() {
+//        return getUserBaseById(userContextHolder.getCurrentUid());
+//    }
 }
