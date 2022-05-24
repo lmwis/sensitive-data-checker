@@ -18,6 +18,8 @@ public class BatchQueryUsageEventResult {
 
     List<AppUsageResult> list;
 
+    int count;
+
     long startTime;
 
     long endTime;

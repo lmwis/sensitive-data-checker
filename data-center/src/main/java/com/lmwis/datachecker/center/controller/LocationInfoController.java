@@ -9,6 +9,7 @@ import com.lmwis.datachecker.center.app.LocationInfoAppService;
 import com.lmwis.datachecker.center.pojo.LocationInfoDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +36,12 @@ public class LocationInfoController extends BaseController {
         }
         log.info("[saveLocation] revive data:{}",locationInfoDTO);
         return CommonReturnType.create(locationInfoAppService.saveLocationInfo(locationInfoDTO));
+    }
+
+    @GetMapping("")
+    public CommonReturnType batchQueryLocationRangeTime(long startTime, long endTime) throws BusinessException {
+
+        return CommonReturnType.create(locationInfoAppService.batchQueryLocationRangTime( startTime, endTime));
     }
 
 }

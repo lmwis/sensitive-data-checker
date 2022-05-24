@@ -1,17 +1,23 @@
 package com.lmwis.datachecker.center.app.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fehead.lang.error.BusinessException;
 import com.fehead.lang.error.EmBusinessError;
+import com.fehead.lang.util.LongUtil;
 import com.lmwis.datachecker.center.app.LocationInfoAppService;
 import com.lmwis.datachecker.center.compoment.UserContextHolder;
 import com.lmwis.datachecker.center.convert.LocationInfoConvert;
 import com.lmwis.datachecker.center.dao.LocationInfoDO;
 import com.lmwis.datachecker.center.dao.mapper.LocationInfoMapper;
+import com.lmwis.datachecker.center.pojo.BatchQueryLocationResult;
 import com.lmwis.datachecker.center.pojo.LocationInfoDTO;
+import com.lmwis.datachecker.center.pojo.LocationResult;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -47,6 +53,45 @@ public class LocationInfoAppServiceImpl implements LocationInfoAppService {
     @Override
     public int batchSaveLocationInfo(List<LocationInfoDTO> dtos) {
         return 0;
+    }
+
+    @Override
+    public BatchQueryLocationResult batchQueryLocationRangTime(long startTime, long endTime) throws BusinessException {
+        if (LongUtil.nullOrZero(startTime) || LongUtil.nullOrZero(endTime)){
+            // 为空默认获取一小时内的数据
+            endTime = System.currentTimeMillis();
+            startTime = endTime - 1000*60*60;
+        }
+
+        QueryWrapper<LocationInfoDO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uid",userContextHolder.getCurrentUid());
+        queryWrapper.between("gmt_create",new Date(startTime), new Date(endTime));
+        queryWrapper.orderByAsc("gmt_create");
+        List<LocationInfoDO> locationInfoDOS = locationInfoMapper.selectList(queryWrapper);
+
+        BatchQueryLocationResult result = new BatchQueryLocationResult();
+
+        result.setList(resolveLocationResultList(locationInfoDOS));
+        result.setCount(result.getList().size());
+        result.setStartTime(startTime);
+        result.setEndTime(endTime);
+        return result;
+    }
+
+    private List<LocationResult> resolveLocationResultList(List<LocationInfoDO> locationInfoDOS){
+        List<LocationResult> results = new ArrayList<>();
+
+        if (CollectionUtils.isNotEmpty(locationInfoDOS)){
+            locationInfoDOS.forEach(k->{
+                LocationResult locationResult = LocationResult.builder()
+                        .latitude(k.getLatitude())
+                        .longitude(k.getLongitude())
+                        .timeStamp(k.getGmtCreate().getTime())
+                        .build();
+                results.add(locationResult);
+            });
+        }
+        return results;
     }
 
     boolean locationDtoValid(LocationInfoDTO dto){

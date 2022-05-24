@@ -38,6 +38,8 @@ public class ImageAppServiceImpl implements ImageAppService {
     //获取图片链接
     final String fileUrlPath = "/file/";
 
+    final String protocol = "http://";
+
     final String port;
     final String host ;
     final String diskPath;
@@ -58,7 +60,7 @@ public class ImageAppServiceImpl implements ImageAppService {
     public String saveFile(MultipartFile file) throws BusinessException {
         // 获取文件名
         String fileName = file.getOriginalFilename();
-        String filUrl = host + ":" + port + fileUrlPath + fileName;
+        String filUrl = protocol + host + ":" + port + fileUrlPath + fileName;
 
         //创建文件路径
         File dest = new File(diskPath + fileName);
@@ -95,7 +97,7 @@ public class ImageAppServiceImpl implements ImageAppService {
 
         // 获取文件名
         String fileName = stringIdGenerator.generateId()+PNG_SUFFIX;
-        String fileUrl = host + ":" + port + fileUrlPath + fileName;
+        String fileUrl = protocol + host + ":" + port + fileUrlPath + fileName;
         byte[] decode = Base64.getDecoder().decode(file);
 
         Path path = Paths.get(diskPath+fileName);

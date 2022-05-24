@@ -11,6 +11,7 @@ import com.lmwis.datachecker.center.dao.mapper.AppBaseDOMapper;
 import com.lmwis.datachecker.center.pojo.AppBaseDTO;
 import com.lmwis.datachecker.center.pojo.BatchInitAppBaseDTO;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ import java.util.List;
  */
 @Service
 @AllArgsConstructor
+@Slf4j
 public class AppBaseAppServiceImpl implements AppBaseAppService {
 
     final AppBaseDOMapper appBaseDOMapper;
@@ -46,15 +48,29 @@ public class AppBaseAppServiceImpl implements AppBaseAppService {
             appBaseDO.setGmtModified(now);
 
             QueryWrapper<AppBaseDO> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("uid",appBaseDO.getUid());
             queryWrapper.eq("name",appBaseDO.getName());
             queryWrapper.eq("package_name",appBaseDO.getPackageName());
-            List<AppBaseDO> appBaseDOS = appBaseDOMapper.selectList(queryWrapper);
-            if (CollectionUtils.isEmpty(appBaseDOS)){
+            AppBaseDO exitAppBase = appBaseDOMapper.selectOne(queryWrapper);
+            if (exitAppBase == null){
                 appBaseDOMapper.insert(appBaseDO);
+            }else {
+                // 重复的检查更新
+                if (!StringUtils.equals(exitAppBase.getPictureUrl(),l.getPictureUrl())){
+                    // 更新图片url
+                    exitAppBase.setPictureUrl(l.getPictureUrl());
+                    appBaseDOMapper.updateById(exitAppBase);
+                }
+                if (!StringUtils.equals(exitAppBase.getVersion(),l.getVersion())){
+                    // 更新图片url
+                    exitAppBase.setVersion(l.getVersion());
+                    appBaseDOMapper.updateById(exitAppBase);
+                }
             }
-            // 重复的不做处理
-        });
 
+
+        });
+        log.info("[batchInitAppBase] 初始化完毕 数量:{}",batchInitAppBaseDTO.getList().size());
         return true;
     }
 
@@ -64,6 +80,7 @@ public class AppBaseAppServiceImpl implements AppBaseAppService {
             return null;
         }
         QueryWrapper<AppBaseDO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uid", userContextHolder.getCurrentUid());
         queryWrapper.eq("package_name",packageName);
         return appBaseDOMapper.selectOne(queryWrapper);
     }

@@ -11,6 +11,7 @@ import com.lmwis.datachecker.center.pojo.BatchQueryUsageEventDTO;
 import com.lmwis.datachecker.center.pojo.BatchUploadAppUsagesDTO;
 import com.lmwis.datachecker.center.pojo.BatchUploadUsageEventDTO;
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,10 +61,14 @@ public class AppUsageController extends BaseController {
     }
 
     @GetMapping(value = "/event")
-    public CommonReturnType batchQueryAppUsageEventRangTime(@RequestBody BatchQueryUsageEventDTO batchQueryUsageEventDTO) throws BusinessException {
-        if (!validateNull(batchQueryUsageEventDTO)){
+    public CommonReturnType batchQueryAppUsageEventRangTime(String mode, long startTime, long endTime) throws BusinessException {
+        if (!validateNull( startTime, endTime)){
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
         }
+        BatchQueryUsageEventDTO batchQueryUsageEventDTO = BatchQueryUsageEventDTO.builder()
+                .mode(StringUtils.isBlank(mode)? 3: Integer.parseInt(mode))
+                .startTime(startTime)
+                .endTime(endTime).build();
         logger.info("[batchQueryAppUsageEventRangTime] batch query param:{}", batchQueryUsageEventDTO);
 
         return CommonReturnType.create(appUsageService.batchQueryUsageEventRangeTime(batchQueryUsageEventDTO));

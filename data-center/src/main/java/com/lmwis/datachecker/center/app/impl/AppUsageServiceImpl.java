@@ -3,6 +3,7 @@ package com.lmwis.datachecker.center.app.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fehead.lang.error.BusinessException;
 import com.fehead.lang.error.EmBusinessError;
+import com.fehead.lang.util.LongUtil;
 import com.lmwis.datachecker.center.app.AppBaseAppService;
 import com.lmwis.datachecker.center.app.AppUsageService;
 import com.lmwis.datachecker.center.compoment.UserContextHolder;
@@ -18,6 +19,7 @@ import com.lmwis.datachecker.center.dao.mapper.UsageEventDOMapper;
 import com.lmwis.datachecker.center.pojo.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -126,32 +128,40 @@ public class AppUsageServiceImpl implements AppUsageService {
         log.info("[fixData] fix success");
     }
     @Override
-    public BatchQueryUsageEventResult batchQueryUsageEventRangeTime(BatchQueryUsageEventDTO batchQueryUsageEventDTO) {
+    public BatchQueryUsageEventResult batchQueryUsageEventRangeTime(BatchQueryUsageEventDTO queryParam) throws BusinessException {
 
 //        fixData();
 
         long endTime = System.currentTimeMillis();
         // 默认读一小时
-        long starTime = 0;
-        if (batchQueryUsageEventDTO.getMode() == BatchQueryAppTimeMode.CUSTOMIZE.getCode()){
-            starTime = batchQueryUsageEventDTO.getStartTime();
-            endTime = batchQueryUsageEventDTO.getEndTime();
+        long startTime = 0;
+        if (LongUtil.nullOrZero(queryParam.getEndTime()) && LongUtil.nullOrZero(queryParam.getStartTime())){
+            if (queryParam.getMode() != BatchQueryAppTimeMode.CUSTOMIZE.getCode()){
+                startTime = convertEndTimeFromMode(queryParam.getMode(), endTime);
+            }else {
+                throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+            }
         }else {
-            starTime = convertEndTimeFromMode(batchQueryUsageEventDTO.getMode(), endTime);
+            startTime = queryParam.getStartTime();
+            endTime = queryParam.getEndTime();
         }
 
         QueryWrapper<UsageEventDO> queryWrapper = new QueryWrapper<>();
-        queryWrapper.between("time_stamp",new Date(starTime), new Date(endTime));
+        queryWrapper.between("time_stamp",new Date(startTime), new Date(endTime));
         queryWrapper.orderByAsc("time_stamp");
         List<UsageEventDO> usageEventDOS = usageEventDOMapper.selectList(queryWrapper);
-        log.info("[batchQueryUsageEventRangeTime] usageEventDOS size:{}",usageEventDOS.size());
+
+        List<AppUsageResult> list = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(usageEventDOS)){
+            log.info("[batchQueryUsageEventRangeTime] usageEventDOS size:{}",usageEventDOS.size());
+            dealSideData(usageEventDOS);
+            list = resolveAppUsageResultList(usageEventDOS);
+        }
 
         BatchQueryUsageEventResult result = new BatchQueryUsageEventResult();
-
-        dealSideData(usageEventDOS);
-
-        result.setList(resolveAppUsageResultList(usageEventDOS));
-        result.setStartTime(starTime);
+        result.setList(list);
+        result.setCount(result.getList().size());
+        result.setStartTime(startTime);
         result.setEndTime(endTime);
         return result;
     }
