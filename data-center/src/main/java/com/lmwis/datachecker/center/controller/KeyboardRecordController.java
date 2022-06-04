@@ -42,4 +42,11 @@ public class KeyboardRecordController extends BaseController {
         }
         return CommonReturnType.create(keyboardRecordAppService.selectKeyboardById(id));
     }
+    @GetMapping("/query")
+    public FeheadResponse batchQueryKeyboardRecordRangTime(long startTime, long endTime) throws BusinessException {
+        if (!validateNull(startTime,endTime)){
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+        }
+        return CommonReturnType.create(keyboardRecordAppService.batchQueryKeyboardRecordRangTime(startTime,endTime));
+    }
 }

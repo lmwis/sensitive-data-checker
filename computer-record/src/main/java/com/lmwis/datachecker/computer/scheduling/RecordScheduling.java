@@ -13,12 +13,12 @@ import org.springframework.stereotype.Component;
  * @Version: 1.0
  */
 @Component
-public class KeyboardRecordScheduling {
+public class RecordScheduling {
 
     final KeyboardRecordService keyboardRecordService;
     final MouseRecordService mouseRecordService;
 
-    public KeyboardRecordScheduling(KeyboardRecordService keyboardRecordService, MouseRecordService mouseRecordService){
+    public RecordScheduling(KeyboardRecordService keyboardRecordService, MouseRecordService mouseRecordService){
         this.keyboardRecordService = keyboardRecordService;
         this.mouseRecordService = mouseRecordService;
         new Thread(new KeyboardRecordSchedulingTask(keyboardRecordService,mouseRecordService)).run();

@@ -23,4 +23,10 @@ public interface MouseRecordConvert {
             @Mapping(target = "gmtModified", expression = "java(new java.util.Date(mouseRecordDTO.getGmtModified()))")
     })
     MouseRecordDO convertToDO(MouseRecordDTO mouseRecordDTO);
+
+    @Mappings({
+            @Mapping(target = "gmtCreate", expression = "java(mouseRecordDO.getGmtCreate().getTime())"),
+            @Mapping(target = "gmtModified", expression = "java(mouseRecordDO.getGmtModified().getTime())")
+    })
+    MouseRecordDTO convertToDTO(MouseRecordDO mouseRecordDO);
 }

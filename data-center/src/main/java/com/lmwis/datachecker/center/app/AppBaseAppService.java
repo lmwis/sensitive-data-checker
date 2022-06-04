@@ -17,4 +17,6 @@ public interface AppBaseAppService {
     AppBaseDO selectAppBaseDOByPackageName(String packageName);
 
     AppBaseDO selectById(long id);
+
+    int selectAllCount();
 }

@@ -166,6 +166,23 @@ public class AppUsageServiceImpl implements AppUsageService {
         return result;
     }
 
+    @Override
+    public UsageEventDO selectLastDO() {
+        QueryWrapper<UsageEventDO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uid",userContextHolder.getCurrentUid());
+        queryWrapper.last("limit 1");
+        queryWrapper.orderByDesc("time_stamp");
+        return usageEventDOMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public int queryCountADay(String day) {
+        QueryWrapper<UsageEventDO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uid",userContextHolder.getCurrentUid());
+        queryWrapper.apply("DATE_FORMAT(gmt_create,'%Y-%m-%d') = \""+day+"\"");
+        return usageEventDOMapper.selectCount(queryWrapper).intValue();
+    }
+
     private void dealSideData(List<UsageEventDO> usageEventDOS){
         // 处理不合理的头尾数据
         UsageEventDO head = usageEventDOS.get(0);

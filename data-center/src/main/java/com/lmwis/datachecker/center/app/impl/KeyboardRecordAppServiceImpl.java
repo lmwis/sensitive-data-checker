@@ -1,5 +1,6 @@
 package com.lmwis.datachecker.center.app.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fehead.lang.error.BusinessException;
 import com.fehead.lang.error.EmBusinessError;
 import com.lmwis.datachecker.center.app.KeyboardRecordAppService;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description: TODO
@@ -103,5 +105,31 @@ public class KeyboardRecordAppServiceImpl implements KeyboardRecordAppService {
     @Override
     public KeyboardRecordDO selectKeyboardById(Long id) {
         return keyboardRecordMapper.selectById(id);
+    }
+
+    @Override
+    public KeyboardRecordDO selectLastDO() {
+        QueryWrapper<KeyboardRecordDO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uid",userContextHolder.getCurrentUid());
+        queryWrapper.last("limit 1");
+        queryWrapper.orderByDesc("gmt_create");
+        return keyboardRecordMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public int queryCountADay(String day) {
+        QueryWrapper<KeyboardRecordDO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uid",userContextHolder.getCurrentUid());
+        queryWrapper.apply("DATE_FORMAT(gmt_create,'%Y-%m-%d') = \""+day+"\"");
+        return keyboardRecordMapper.selectCount(queryWrapper).intValue();
+    }
+
+    @Override
+    public List<KeyboardRecordDTO> batchQueryKeyboardRecordRangTime(long startTime, long endTime) {
+        QueryWrapper<KeyboardRecordDO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.between("gmt_create",new Date(startTime), new Date(endTime));
+        queryWrapper.orderByAsc("gmt_create");
+        return keyboardRecordMapper.selectList(queryWrapper).stream()
+                .map(KeyboardRecordConvert.CONVERT::convertToDTO).collect(Collectors.toList());
     }
 }

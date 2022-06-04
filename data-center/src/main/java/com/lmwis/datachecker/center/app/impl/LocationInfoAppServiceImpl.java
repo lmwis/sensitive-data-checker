@@ -78,6 +78,23 @@ public class LocationInfoAppServiceImpl implements LocationInfoAppService {
         return result;
     }
 
+    @Override
+    public LocationInfoDO selectLastDO() {
+        QueryWrapper<LocationInfoDO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uid",userContextHolder.getCurrentUid());
+        queryWrapper.last("limit 1");
+        queryWrapper.orderByDesc("gmt_create");
+        return locationInfoMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public int queryCountADay(String day) {
+        QueryWrapper<LocationInfoDO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uid",userContextHolder.getCurrentUid());
+        queryWrapper.apply("DATE_FORMAT(gmt_create,'%Y-%m-%d') = \""+day+"\"");
+        return locationInfoMapper.selectCount(queryWrapper).intValue();
+    }
+
     private List<LocationResult> resolveLocationResultList(List<LocationInfoDO> locationInfoDOS){
         List<LocationResult> results = new ArrayList<>();
 

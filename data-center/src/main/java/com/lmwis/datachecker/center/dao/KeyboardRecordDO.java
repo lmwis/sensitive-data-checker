@@ -36,11 +36,6 @@ public class KeyboardRecordDO {
      */
     Integer action;
 
-    /**
-     * 枚举值
-     * mac windows
-     */
-    Long ownerId;
 
     Date gmtCreate;
 

@@ -42,4 +42,11 @@ public class MouseRecordController extends BaseController {
         }
         return CommonReturnType.create(mouseRecordAppService.selectMouseById(id));
     }
+    @GetMapping("/query")
+    public FeheadResponse batchQueryMouseRecordRangTime(long startTime, long endTime) throws BusinessException {
+        if (!validateNull(startTime,endTime)){
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+        }
+        return CommonReturnType.create(mouseRecordAppService.batchQueryMouseRecordRangTime(startTime,endTime));
+    }
 }

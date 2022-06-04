@@ -35,7 +35,7 @@ public class UserInfoAppServiceImpl implements UserInfoAppService {
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
         }
         MyComputerInfo computerInfo = MyComputerInfoConvert.CONVERT.convertToDO(myComputerInfoDTO);
-
+        computerInfo.setUid(userContextHolder.getCurrentUid());
         QueryWrapper<MyComputerInfo> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_name",computerInfo.getUserName());
         queryWrapper.eq("os_name",computerInfo.getOsName());
@@ -49,7 +49,13 @@ public class UserInfoAppServiceImpl implements UserInfoAppService {
         }else{ // 用户重复 TODO: user repeat need to clean it.
 
         }
-        computerInfo.setUid(userContextHolder.getCurrentUid());
         return computerInfo;
+    }
+
+    @Override
+    public MyComputerInfo selectUserComputerInfo(long uid) {
+        QueryWrapper<MyComputerInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uid",uid);
+        return computerInfoMapper.selectOne(queryWrapper);
     }
 }

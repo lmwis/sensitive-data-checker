@@ -1,19 +1,25 @@
 package com.lmwis.datachecker.center.app.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fehead.lang.error.BusinessException;
 import com.fehead.lang.error.EmBusinessError;
 import com.lmwis.datachecker.center.app.MouseRecordAppService;
+import com.lmwis.datachecker.center.app.UserInfoAppService;
 import com.lmwis.datachecker.center.compoment.UserContextHolder;
 import com.lmwis.datachecker.center.convert.MouseRecordConvert;
 import com.lmwis.datachecker.center.dao.MouseRecordDO;
+import com.lmwis.datachecker.center.dao.MyComputerInfo;
 import com.lmwis.datachecker.center.dao.mapper.MouseRecordMapper;
+import com.lmwis.datachecker.center.pojo.BatchQueryMouseRecordResult;
 import com.lmwis.datachecker.center.pojo.MouseRecordDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @Description: TODO
@@ -29,6 +35,8 @@ public class MouseRecordAppServiceImpl implements MouseRecordAppService {
     final MouseRecordMapper mouseRecordMapper;
 
     final UserContextHolder userContextHolder;
+
+    final UserInfoAppService userInfoAppService;
 
     private final List<MouseRecordDO> lists = new ArrayList<>();
 
@@ -92,5 +100,28 @@ public class MouseRecordAppServiceImpl implements MouseRecordAppService {
     @Override
     public MouseRecordDO selectMouseById(Long id) {
         return mouseRecordMapper.selectById(id);
+    }
+
+    @Override
+    public int queryCountADay(String day) {
+        QueryWrapper<MouseRecordDO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uid",userContextHolder.getCurrentUid());
+        queryWrapper.apply("DATE_FORMAT(gmt_create,'%Y-%m-%d') = \""+day+"\"");
+        return mouseRecordMapper.selectCount(queryWrapper).intValue();
+    }
+
+    @Override
+    public BatchQueryMouseRecordResult batchQueryMouseRecordRangTime(long startTime, long endTime) {
+        QueryWrapper<MouseRecordDO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.between("gmt_create",new Date(startTime), new Date(endTime));
+        queryWrapper.orderByAsc("gmt_create");
+        List<MouseRecordDTO> list =  mouseRecordMapper.selectList(queryWrapper).stream()
+                .map(MouseRecordConvert.CONVERT::convertToDTO).collect(Collectors.toList());
+        MyComputerInfo computerInfo = userInfoAppService.selectUserComputerInfo(userContextHolder.getCurrentUid());
+        return BatchQueryMouseRecordResult.builder()
+                .list(list)
+                .width(computerInfo.getScreenWidth())
+                .height(computerInfo.getScreenHeight())
+                .build();
     }
 }

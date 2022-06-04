@@ -90,6 +90,13 @@ public class AppBaseAppServiceImpl implements AppBaseAppService {
         return appBaseDOMapper.selectById(id);
     }
 
+    @Override
+    public int selectAllCount() {
+        QueryWrapper<AppBaseDO> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("uid", userContextHolder.getCurrentUid());
+        return appBaseDOMapper.selectCount(queryWrapper).intValue();
+    }
+
     private boolean verifyDTO(AppBaseDTO appBaseDTO){
         if (StringUtils.isBlank(appBaseDTO.getName()) ||
         StringUtils.isBlank(appBaseDTO.getPackageName()) ||

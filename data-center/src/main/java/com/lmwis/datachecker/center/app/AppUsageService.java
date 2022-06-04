@@ -1,6 +1,7 @@
 package com.lmwis.datachecker.center.app;
 
 import com.fehead.lang.error.BusinessException;
+import com.lmwis.datachecker.center.dao.UsageEventDO;
 import com.lmwis.datachecker.center.pojo.BatchQueryUsageEventDTO;
 import com.lmwis.datachecker.center.pojo.BatchQueryUsageEventResult;
 import com.lmwis.datachecker.center.pojo.BatchUploadAppUsagesDTO;
@@ -24,4 +25,8 @@ public interface AppUsageService {
     boolean updateUsageEvent(BatchUploadUsageEventDTO batchUploadUsageEventDTO) throws BusinessException;
 
     BatchQueryUsageEventResult batchQueryUsageEventRangeTime(BatchQueryUsageEventDTO batchQueryUsageEventDTO) throws BusinessException;
+
+    UsageEventDO selectLastDO();
+
+    int queryCountADay(String day);
 }

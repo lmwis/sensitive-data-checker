@@ -14,4 +14,7 @@ public interface UserInfoAppService {
 
     MyComputerInfo uploadComputer(MyComputerInfoDTO myComputerInfo) throws BusinessException;
 
+
+    MyComputerInfo selectUserComputerInfo(long uid);
+
 }

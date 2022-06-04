@@ -23,4 +23,10 @@ public interface KeyboardRecordConvert {
             @Mapping(target = "gmtModified", expression = "java(new java.util.Date(keyboardRecordDTO.getGmtModified()))")
     })
     KeyboardRecordDO convertToDO(KeyboardRecordDTO keyboardRecordDTO);
+
+    @Mappings({
+            @Mapping(target = "gmtCreate", expression = "java(keyboardRecordDO.getGmtCreate().getTime())"),
+            @Mapping(target = "gmtModified", expression = "java(keyboardRecordDO.getGmtModified().getTime())")
+    })
+    KeyboardRecordDTO convertToDTO(KeyboardRecordDO keyboardRecordDO);
 }

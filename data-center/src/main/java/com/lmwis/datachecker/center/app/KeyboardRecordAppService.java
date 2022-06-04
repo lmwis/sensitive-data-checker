@@ -5,6 +5,8 @@ import com.fehead.lang.error.BusinessException;
 import com.lmwis.datachecker.center.dao.KeyboardRecordDO;
 import com.lmwis.datachecker.center.pojo.KeyboardRecordDTO;
 
+import java.util.List;
+
 /**
  * @Description: TODO
  * @Author: lmwis
@@ -18,4 +20,10 @@ public interface KeyboardRecordAppService {
     int saveTempRecord();
 
     KeyboardRecordDO selectKeyboardById(Long id);
+
+    KeyboardRecordDO selectLastDO();
+
+    int queryCountADay(String day);
+
+    List<KeyboardRecordDTO> batchQueryKeyboardRecordRangTime(long startTime, long endTime);
 }

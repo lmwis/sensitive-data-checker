@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/app")
 @AllArgsConstructor
-public class AppUsageController extends BaseController {
+public class AppInfoController extends BaseController {
 
     final AppBaseAppService appBaseAppService;
 
@@ -72,5 +72,10 @@ public class AppUsageController extends BaseController {
         logger.info("[batchQueryAppUsageEventRangTime] batch query param:{}", batchQueryUsageEventDTO);
 
         return CommonReturnType.create(appUsageService.batchQueryUsageEventRangeTime(batchQueryUsageEventDTO));
+    }
+
+    @GetMapping(value = "/count")
+    public CommonReturnType countApp(){
+        return CommonReturnType.create(appBaseAppService.selectAllCount());
     }
 }
