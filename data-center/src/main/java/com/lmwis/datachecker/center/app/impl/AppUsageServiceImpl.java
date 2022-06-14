@@ -49,7 +49,7 @@ public class AppUsageServiceImpl implements AppUsageService {
     final int MAX_DIF_TIME_MS = 2000;
 
     @Override
-    public boolean updateAppUsage(BatchUploadAppUsagesDTO batchUploadAppUsagesDTO) throws BusinessException {
+    public boolean uploadAppUsage(BatchUploadAppUsagesDTO batchUploadAppUsagesDTO) throws BusinessException {
         if (batchUploadAppUsagesDTO==null){
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
         }
@@ -78,7 +78,7 @@ public class AppUsageServiceImpl implements AppUsageService {
     }
 
     @Override
-    public boolean updateUsageEvent(BatchUploadUsageEventDTO batchUploadUsageEventDTO) throws BusinessException {
+    public boolean uploadUsageEvent(BatchUploadUsageEventDTO batchUploadUsageEventDTO) throws BusinessException {
         if (batchUploadUsageEventDTO==null){
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
         }

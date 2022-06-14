@@ -8,12 +8,11 @@ import java.util.List;
 /**
  * @Description: TODO
  * @Author: lmwis
- * @Data: 2022/5/21 6:40 下午
+ * @Data: 2022/6/13 5:13 下午
  * @Version: 1.0
  */
 @Data
 @ToString
-public class BatchUploadUsageEventDTO {
-    List<UsageEventDTO> list;
-
+public class BatchUploadLocationDTO {
+    List<LocationInfoDTO> list;
 }

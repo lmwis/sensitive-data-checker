@@ -45,7 +45,7 @@ public class AppInfoController extends BaseController {
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
         }
 //        logger.info("[batchUploadAppUsages] receive data:{}", GsonUtil.toString(batchUploadAppUsagesDTO));
-        return CommonReturnType.create(appUsageService.updateAppUsage(batchUploadAppUsagesDTO));
+        return CommonReturnType.create(appUsageService.uploadAppUsage(batchUploadAppUsagesDTO));
 
     }
 
@@ -56,7 +56,7 @@ public class AppInfoController extends BaseController {
             throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
         }
         logger.info("[batchUploadUsagesEvent] receive data size:{}", batchUploadUsageEventDTO.getList().size());
-        return CommonReturnType.create(appUsageService.updateUsageEvent(batchUploadUsageEventDTO));
+        return CommonReturnType.create(appUsageService.uploadUsageEvent(batchUploadUsageEventDTO));
 
     }
 

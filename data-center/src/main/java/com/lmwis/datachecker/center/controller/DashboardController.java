@@ -39,6 +39,10 @@ public class DashboardController {
 
     final AppBaseAppService appBaseAppService;
 
+    final IphoneActionAppService iphoneActionAppService;
+
+    final IphonePostureAppService iphonePostureAppService;
+
 
     @GetMapping("/init")
     public CommonReturnType getDashboardInitData(){
@@ -61,6 +65,8 @@ public class DashboardController {
         .appCount(days.stream().map(appUsageService::queryCountADay).collect(Collectors.toList()))
                 .keyboardCount(days.stream().map(keyboardRecordAppService::queryCountADay).collect(Collectors.toList()))
                 .mouseCount(days.stream().map(mouseRecordAppService::queryCountADay).collect(Collectors.toList()))
+                .postureCount(days.stream().map(iphonePostureAppService::queryCountADay).collect(Collectors.toList()))
+                .actionCount(days.stream().map(iphoneActionAppService::queryCountADay).collect(Collectors.toList()))
         .build());
     }
     private List<String> queryLast7DayString(){

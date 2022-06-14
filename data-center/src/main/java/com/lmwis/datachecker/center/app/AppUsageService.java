@@ -20,9 +20,9 @@ public interface AppUsageService {
      * @param batchUploadAppUsagesDTO
      * @return
      */
-    boolean updateAppUsage(BatchUploadAppUsagesDTO batchUploadAppUsagesDTO) throws BusinessException;
+    boolean uploadAppUsage(BatchUploadAppUsagesDTO batchUploadAppUsagesDTO) throws BusinessException;
 
-    boolean updateUsageEvent(BatchUploadUsageEventDTO batchUploadUsageEventDTO) throws BusinessException;
+    boolean uploadUsageEvent(BatchUploadUsageEventDTO batchUploadUsageEventDTO) throws BusinessException;
 
     BatchQueryUsageEventResult batchQueryUsageEventRangeTime(BatchQueryUsageEventDTO batchQueryUsageEventDTO) throws BusinessException;
 

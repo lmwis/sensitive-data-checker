@@ -10,6 +10,7 @@ import com.lmwis.datachecker.center.convert.LocationInfoConvert;
 import com.lmwis.datachecker.center.dao.LocationInfoDO;
 import com.lmwis.datachecker.center.dao.mapper.LocationInfoMapper;
 import com.lmwis.datachecker.center.pojo.BatchQueryLocationResult;
+import com.lmwis.datachecker.center.pojo.BatchUploadLocationDTO;
 import com.lmwis.datachecker.center.pojo.LocationInfoDTO;
 import com.lmwis.datachecker.center.pojo.LocationResult;
 import lombok.RequiredArgsConstructor;
@@ -44,8 +45,6 @@ public class LocationInfoAppServiceImpl implements LocationInfoAppService {
         LocationInfoDO locationInfoDO = LocationInfoConvert.CONVERT.convertToDO(dto);
 
         locationInfoDO.setUid(userContextHolder.getCurrentUid());
-        locationInfoDO.setGmtCreate(new Date());
-        locationInfoDO.setGmtModify(new Date());
 
         return locationInfoMapper.insert(locationInfoDO)>0;
     }
@@ -95,6 +94,19 @@ public class LocationInfoAppServiceImpl implements LocationInfoAppService {
         return locationInfoMapper.selectCount(queryWrapper).intValue();
     }
 
+    @Override
+    public boolean batchUploadIphonePosture(BatchUploadLocationDTO batchUploadLocationDTO) throws BusinessException {
+        if (batchUploadLocationDTO == null || CollectionUtils.isEmpty(batchUploadLocationDTO.getList())){
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+        }
+        batchUploadLocationDTO.getList().forEach(k->{
+            LocationInfoDO locationInfoDO = LocationInfoConvert.CONVERT.convertToDO(k);
+            locationInfoDO.setUid(userContextHolder.getCurrentUid());
+            locationInfoMapper.insert(locationInfoDO);
+        });
+        return true;
+    }
+
     private List<LocationResult> resolveLocationResultList(List<LocationInfoDO> locationInfoDOS){
         List<LocationResult> results = new ArrayList<>();
 
@@ -113,11 +125,7 @@ public class LocationInfoAppServiceImpl implements LocationInfoAppService {
 
     boolean locationDtoValid(LocationInfoDTO dto){
 
-        if (dto != null && StringUtils.isNoneBlank(dto.getLatitude())
-        && StringUtils.isNoneBlank(dto.getLongitude())){
-            return true;
-        }
-
-        return false;
+        return dto != null && StringUtils.isNoneBlank(dto.getLatitude())
+                && StringUtils.isNoneBlank(dto.getLongitude());
     }
 }

@@ -4,27 +4,31 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.ToString;
 
 import java.util.Date;
 
 /**
  * @Description: TODO
  * @Author: lmwis
- * @Data: 2022/4/30 5:40 下午
+ * @Data: 2022/6/6 8:43 下午
  * @Version: 1.0
  */
-@TableName("location_info")
 @Data
-public class LocationInfoDO {
+@ToString
+@TableName("iphone_posture")
+public class IphonePostureDO {
 
     @TableId(type = IdType.AUTO)
     Long id;
 
     Long uid;
 
-    String latitude;
+    double azimuth;
 
-    String longitude;
+    double pitch;
+
+    double roll;
 
     Date gmtCreate;
 

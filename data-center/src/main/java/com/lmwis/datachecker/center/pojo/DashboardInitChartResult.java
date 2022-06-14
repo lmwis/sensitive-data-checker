@@ -23,5 +23,8 @@ public class DashboardInitChartResult {
     List<Integer> keyboardCount;
     List<Integer> mouseCount;
     List<Integer> netCount;
+    List<Integer> postureCount;
+    List<Integer> actionCount;
+    List<Integer> pcAppCount;
 
 }

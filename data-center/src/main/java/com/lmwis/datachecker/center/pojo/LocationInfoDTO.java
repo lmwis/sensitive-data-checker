@@ -21,4 +21,8 @@ public class LocationInfoDTO implements Serializable {
 
     String longitude;
 
+    long gmtCreate;
+
+    long gmtModified;
+
 }
