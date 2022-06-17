@@ -4,6 +4,7 @@ package com.lmwis.datachecker.center.app;
 import com.fehead.lang.error.BusinessException;
 import com.lmwis.datachecker.center.dao.MouseRecordDO;
 import com.lmwis.datachecker.center.pojo.BatchQueryMouseRecordResult;
+import com.lmwis.datachecker.center.pojo.BatchUploadMouseRecordDTO;
 import com.lmwis.datachecker.center.pojo.MouseRecordDTO;
 
 /**
@@ -23,4 +24,6 @@ public interface MouseRecordAppService {
     int queryCountADay(String day);
 
     BatchQueryMouseRecordResult batchQueryMouseRecordRangTime(long startTime, long endTime);
+
+    boolean batchUploadMouseRecord(BatchUploadMouseRecordDTO batchUploadMouseRecordDTO) throws BusinessException;
 }

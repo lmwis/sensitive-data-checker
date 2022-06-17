@@ -1,6 +1,6 @@
 package com.lmwis.datachecker.computer.service.impl;
 
-import com.lmwis.datachecker.computer.client.DataCenterClient;
+import com.lmwis.datachecker.computer.client.DataStore;
 import com.lmwis.datachecker.computer.pojo.KeyboardRecordDTO;
 import com.lmwis.datachecker.computer.service.KeyboardRecordService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,14 +19,14 @@ import java.util.List;
 @Slf4j
 public class KeyboardRecordServiceImpl implements KeyboardRecordService {
 
-    private final DataCenterClient dataCenterClient;
+    final DataStore dataStore;
 
     private final List<KeyboardRecordDTO> lists = new ArrayList<>();
 
     private final double threshold = 20;
 
-    public KeyboardRecordServiceImpl(DataCenterClient dataCenterClient) {
-        this.dataCenterClient = dataCenterClient;
+    public KeyboardRecordServiceImpl(DataStore dataStore) {
+        this.dataStore = dataStore;
     }
 
     public void insertRecordByTemp(KeyboardRecordDTO keyboardRecord) {
@@ -43,7 +43,8 @@ public class KeyboardRecordServiceImpl implements KeyboardRecordService {
         int insert = 0;
         try {
             for (KeyboardRecordDTO k : o) {
-                insert += dataCenterClient.saveKeyboardRecord(k);
+//                insert += dataCenterClient.saveKeyboardRecord(k);
+                dataStore.saveKeyboardRecord(k);
             }
         } catch (Exception e) {
             log.error("数据库写入失败：" + e.getMessage());

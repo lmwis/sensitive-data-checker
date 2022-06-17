@@ -6,6 +6,7 @@ import com.fehead.lang.error.EmBusinessError;
 import com.fehead.lang.response.CommonReturnType;
 import com.fehead.lang.response.FeheadResponse;
 import com.lmwis.datachecker.center.app.KeyboardRecordAppService;
+import com.lmwis.datachecker.center.pojo.BatchUploadKeyboardRecordDTO;
 import com.lmwis.datachecker.center.pojo.KeyboardRecordDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,16 @@ public class KeyboardRecordController extends BaseController {
         }
 //        log.info("[saveKeyboardRecord] receive data:{}", keyboardRecordDTO);
         return CommonReturnType.create(keyboardRecordAppService.insertRecordByTemp(keyboardRecordDTO));
+    }
+
+    @PostMapping(value = "/batch",produces = MediaType.APPLICATION_JSON_VALUE)
+    public FeheadResponse batchUploadKeyboardRecord(@RequestBody BatchUploadKeyboardRecordDTO batchUploadKeyboardRecordDTO) throws BusinessException {
+
+        if (!validateNull(batchUploadKeyboardRecordDTO)){
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+        }
+//        log.info("[saveKeyboardRecord] receive data:{}", keyboardRecordDTO);
+        return CommonReturnType.create(keyboardRecordAppService.batchUploadKeyboardRecord(batchUploadKeyboardRecordDTO));
     }
     @GetMapping("/{id}")
     public FeheadResponse selectKeyBoardById(@PathVariable Long id) throws BusinessException {

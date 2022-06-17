@@ -3,6 +3,7 @@ package com.lmwis.datachecker.center.app;
 
 import com.fehead.lang.error.BusinessException;
 import com.lmwis.datachecker.center.dao.KeyboardRecordDO;
+import com.lmwis.datachecker.center.pojo.BatchUploadKeyboardRecordDTO;
 import com.lmwis.datachecker.center.pojo.KeyboardRecordDTO;
 
 import java.util.List;
@@ -26,4 +27,6 @@ public interface KeyboardRecordAppService {
     int queryCountADay(String day);
 
     List<KeyboardRecordDTO> batchQueryKeyboardRecordRangTime(long startTime, long endTime);
+
+    boolean batchUploadKeyboardRecord(BatchUploadKeyboardRecordDTO batchUploadKeyboardRecordDTO) throws BusinessException;
 }

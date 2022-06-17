@@ -8,8 +8,10 @@ import com.lmwis.datachecker.center.compoment.UserContextHolder;
 import com.lmwis.datachecker.center.convert.KeyboardRecordConvert;
 import com.lmwis.datachecker.center.dao.KeyboardRecordDO;
 import com.lmwis.datachecker.center.dao.mapper.KeyboardRecordMapper;
+import com.lmwis.datachecker.center.pojo.BatchUploadKeyboardRecordDTO;
 import com.lmwis.datachecker.center.pojo.KeyboardRecordDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -131,5 +133,18 @@ public class KeyboardRecordAppServiceImpl implements KeyboardRecordAppService {
         queryWrapper.orderByAsc("gmt_create");
         return keyboardRecordMapper.selectList(queryWrapper).stream()
                 .map(KeyboardRecordConvert.CONVERT::convertToDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean batchUploadKeyboardRecord(BatchUploadKeyboardRecordDTO batchUploadKeyboardRecordDTO) throws BusinessException {
+        if (batchUploadKeyboardRecordDTO == null || CollectionUtils.isEmpty(batchUploadKeyboardRecordDTO.getList())){
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+        }
+        batchUploadKeyboardRecordDTO.getList().forEach(k->{
+            KeyboardRecordDO keyboardRecordDO = KeyboardRecordConvert.CONVERT.convertToDO(k);
+            keyboardRecordDO.setUid(userContextHolder.getCurrentUid());
+            keyboardRecordMapper.insert(keyboardRecordDO);
+        });
+        return true;
     }
 }

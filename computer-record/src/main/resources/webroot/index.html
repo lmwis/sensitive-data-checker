@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Jmitm</title>
+		<link rel="stylesheet" type="text/css" href="jquery-easyui-1.9.7/themes/metro/easyui.css">
+		<link rel="stylesheet" type="text/css" href="jquery-easyui-1.9.7/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="../demo.css">
+		<script type="text/javascript" src="jquery-easyui-1.9.7/jquery.min.js"></script>
+		<script type="text/javascript" src="jquery-easyui-1.9.7/jquery.easyui.min.js"></script>
+		<script type="text/javascript">
+			// 设置Jmitm控制台全局请求，不在控制台中展示（一定要放在最上面，放到$(function)里，会无法拦截html里优先渲染完成的组件）
+			$.ajaxSetup({
+				global: true,
+			  	headers: {"_Jmitm_console": true}
+			});
+				
+			function sessionDgClickRow(index, row) {
+				$.get("/session/get?id=" + row.sessionId, function(jsonObj) {
+					// load data	
+					$("#SESN_STAGE").find("#requestHeaderPannel").find("#parsed").textbox("setText", jsonObj.requestHeader);
+					$("#SESN_STAGE").find("#requestPannel4Detail").find("#source").html(jsonObj.requestBody4Source);
+					$("#SESN_STAGE").find("#requestPannel4Detail").find("#parsed").textbox("setText", jsonObj.requestBody4Parsed);
+					$("#SESN_STAGE").find("#responseHeaderPannel").html(jsonObj.responseHeader);
+					$("#SESN_STAGE").find("#responsePannel4Detail").find("#source").html(jsonObj.responseBody4Source);
+					$("#SESN_STAGE").find("#responsePannel4Detail").find("#parsed").html(jsonObj.responseBody4Parsed);
+					// FIXME 总是展示不全
+					$("#SESN_STAGE").find("#responsePannel4Detail").find("#parsed").height($("#SESN_STAGE").find("#responsePannel4Detail").height() - 100);
+					$("#SESN_STAGE").find("#responsePannel4Detail").find("#parsed").doLayout();
+					// expand east_panel
+					if($("#SESN_STAGE").find("#eastPannel").panel("options")["collapsed"] == true) {
+						$("#SESN_STAGE").find("body").layout("expand", "east");
+					}
+					console("Session(" + row.sessionId + ") createTime: " + jsonObj.createTime);
+				});
+			}
+			
+			var wssocket;
+			var consoleId = new Date().getTime();
+			
+			$(function(){
+				
+				if (!window.WebSocket) {
+					window.WebSocket = window.MozWebSocket;
+				}
+				
+		        wssocket = new WebSocket("ws://localhost:52996/ws_connect?console_id=" + consoleId);
+		        setInterval(function() {
+					wssocket.send("{'type': 9001}");
+				}, 5000);
+				
+				wssocket.onmessage = function(event) {
+					var msg = JSON.parse(event.data);
+					if (msg.type == 2001) {
+						/*** SESSION CONNECT ***/
+						$("#SESN_STAGE").find("#dgMain").datagrid("appendRow", msg.data);
+					}
+				};
+				
+				// 初始化MockButton
+				$('#mockButton').switchbutton({
+					checked: true,
+					onChange: function(checked) {
+						$.post("/config/mock_update", {"switcher": checked}, function(resp) {
+			            	console(checked ? "Mock Open": "Mock Closed");
+						});
+					}
+				});
+				
+				// 初始化HttpsProxy按钮
+				$('#httpProxyButton').switchbutton({
+					checked: true,
+					onChange: function(checked) {
+						$.post("/config/https_proxy_update", {"switcher": checked}, function(resp) {
+			            	console(checked ? "Mock Open" : "Mock Closed");
+						});
+					}
+				});
+				
+				$.get("/config/get", function(resp) {
+					var configObj = eval("(" + resp + ")");
+					$('#mockButton').switchbutton(configObj.mock ? "check" : "uncheck");
+					$('#httpProxyButton').switchbutton(configObj.httpsProxy ? "check" : "uncheck");
+				});
+		    })
+		    
+		    function clickSessionSearchBtn() {
+		    	$("#SESN_STAGE").find("#dgMain").datagrid("load", {
+		    		keyword : $("#SESN_STAGE").find("#sessionKeyword").val(),
+		    		host : $("#SESN_STAGE").find("#hostKeyword").val()
+		    	});
+		    }
+		    
+		    function dataGridContextMenu(e, index, row) {
+		    	e.preventDefault();
+		    	$("#SESN_STAGE").find("#dgMain").datagrid("selectRow", index);
+		    	if (!cmenu){
+					createColumnMenu(row);
+				}
+				cmenu.menu('show', {
+					left:e.pageX,
+					top:e.pageY
+				});
+		    }
+			
+			var cmenu;
+			function createColumnMenu(){
+				cmenu = $('<div/>').appendTo('body');
+				cmenu.menu({
+					onClick: function(item) {
+						var row = $("#SESN_STAGE").find("#dgMain").datagrid("getSelected");
+						if (item.id == "btn2") {
+							$.post("/session/clear", function(resp) {
+								$("#SESN_STAGE").find("#dgMain").datagrid("loadData", []);
+							});
+						} else if (item.id == "btn1"){
+							$("#SESN_STAGE").find("#dgMain").datagrid("loadData", []);
+						} else if (item.id == "btn3"){
+							$.get("/session/getHttpRequest?id=" + row.sessionId, function(resp) {
+								// load data
+								copy(resp);
+	            				console("Copy Success");
+							});
+						} 
+					}
+				});
+				cmenu.menu('appendItem', {
+					id: 'btn1',
+					text: "Clear Browser Records"
+				});
+				cmenu.menu('appendItem', {
+					id: 'btn2',
+					text: "Clear Server Records"
+				});
+				cmenu.menu('appendItem', {
+					id: 'btn3',
+					text: "Copy Request"
+				});
+			}
+			
+			function console(text) {
+				$("#statusPannel").html(text);
+			}
+			
+	        function copy(text) {
+	            var textarea = document.createElement("textarea"); //创建input对象
+	            var currentFocus = document.activeElement; //当前获得焦点的元素
+	            document.body.appendChild(textarea); //添加元素
+	            textarea.value = text;
+	            textarea.focus();
+	            if (textarea.setSelectionRange) {
+	                textarea.setSelectionRange(0, textarea.value.length); //获取光标起始位置到结束位置
+	            } else {
+	                textarea.select();
+	            }
+	            document.execCommand("copy"); //执行复制
+	            document.body.removeChild(textarea); //删除元素
+	            currentFocus.focus();
+	        }
+	        
+	        function sendRequest() {
+	        	var postData = {
+	        		"request": $("#SESN_STAGE").find("#requestHeaderPannel").find("#parsed").textbox("getText"),
+	        		"body": $("#SESN_STAGE").find("#requestPannel4Detail").find("#parsed").textbox("getText")
+	        	};
+				$.post("/session/sendRequest", postData, function(resp) {
+	            	alert("send success");
+				});
+	        }
+	        
+	        function bindStatus(value,row,index){
+                    return true;
+            }
+            $.extend($.fn.datagrid.methods, {
+				getChecked: function (jq) {
+					var rr = [];
+					var rows = jq.datagrid('getRows');
+					jq.datagrid('getPanel').find('div.datagrid-cell input:checked').each(function () {
+						var index = $(this).parents('tr:first').attr('datagrid-row-index');
+						rr.push(rows[index]);
+					});
+					return rr;
+				}
+			});
+			
+			function mockListDgClickRow(index, row) {
+				$.post("/config/mock/update", {"id": row.id, "status": row.status == 0 ? 1 : 0}, function(resp) {
+					$("#MockListDataGrid").datagrid("reload");
+				});
+			}
+		</script>
+	</head>
+	<body class="easyui-layout" data-options="tabPosition:'left', border:false, plain:true, headerWidth: 60" id="SESN_STAGE">
+		<div id="centerLayout" class="easyui-layout" data-options="region:'center', collapsible:false, split: false" style="width:40%">
+			<div data-options="region:'center', border:false, collapsible: false, split: false">
+				<table class="easyui-datagrid" id="dgMain" data-options="remoteSort: false, fit: true, border:false, toolbar:'#sessionDgTb', onRowContextMenu: dataGridContextMenu, 
+						onClickRow: sessionDgClickRow, striped: true, singleSelect: true, collapsible: true, url:'/session/list', method:'get'">
+					<thead>
+						<tr>
+							<th data-options="field:'sessionId', width: 55, hidden: true, align: 'center'">ID</th>
+							<th data-options="field:'uri', width: '90%'">Name</th>
+							<th data-options="field:'responseCode', sortable:true, sorter:function(a,b){return a<b;}">Code</th>
+						</tr>
+					</thead>
+				</table>
+				<div id="sessionDgTb" style="padding:5px;height:auto">
+					<input class="easyui-textbox" id="hostKeyword" data-options="prompt:'Search Host'" style="width:100px" />
+					<input class="easyui-textbox" id="sessionKeyword" data-options="prompt:'Search URI'" style="width:200px" />
+					<!-- 
+					<select class="easyui-combobox" style="width:100px;">
+					    <option value="all">*</option>
+					    <option value="text/html">html</option>
+					    <option value="application/json">json</option>
+					    <option value="jpeg/gif/png">image</option>
+					</select>-->
+					<a href="javascript:clickSessionSearchBtn();" class="easyui-linkbutton" iconCls="icon-search">Search</a>
+					<a class="easyui-linkbutton" data-options="iconCls:'icon-tip'" href="/c/d"> Cert Download </a>
+				</div>
+			</div>
+			<div class="easyui-panel" id="statusPannel" data-options="region:'south', border:false, collapsible:false, split: false"
+				style="height:24px; padding: 2px 0px 0px 5px; font-weight: bold">
+			</div>
+		</div>
+		<div class="easyui-layout" id="eastPannel" data-options="region:'east',split:true" style="width:60%;">
+			<div id="tab-tools">
+				<a href="javascript:void(0)" class="easyui-menubutton" data-options="menu:'#mm1', plain:true,iconCls:'icon-more'" onclick="addPanel()"></a>
+			</div>
+			<div id="mm1" style="width:150px;">
+		        <div onclick="$('#masterSwtichWindow').window('open');">Master Switch</div> 
+		        <div onclick="$('#mockWindow').window('open');">Mock Panel</div>
+		    </div>
+			<div class="easyui-tabs" id="tab" data-options="tools:'#tab-tools', region:'center', border:false, plain:true, tabWidth:100, tabPosition: 'top'">
+				<div title="Request" data-options="fit:true, border:false" class="easyui-layout" >
+					<div id="requestHeaderPannel" data-options="border:false, region:'center', split:false, collapsible:false" >
+						<div data-options="border:false, fit: true" class="easyui-panel" >
+							<input id="parsed" class="easyui-textbox" style="border:false; padding: 20px 10px 10px 10px;" data-options="fit:true, multiline: true" >
+						</div>
+					</div>
+					<div id="requestPannel4Detail" class="easyui-layout" data-options="region:'south', border:false, split:false, collapsible:false, height: '60%'">
+						<div class="easyui-tabs" data-options="region:'center', border:false, split:true, collapsible:false">
+							<div title="Parsed" data-options="fit:true, border:false">
+								<input id="parsed" class="easyui-textbox" style="padding: 10px;" data-options="prompt: 'No Body...', fit:true, multiline: true">
+							</div>
+							<div id="source" title="Source" data-options="fit:true, border:false" style="padding: 10px;">
+							</div> 
+						</div>
+						<div data-options="region:'south', border: false, height: '70px'" class="easyui-panel">
+							<a style="float: right; margin: 4px;" class="easyui-linkbutton" onclick="sendRequest();">Send Request!</a>
+						</div>
+					</div>
+				</div>
+				<div title="Response" data-options="fit:true, border:false" class="easyui-layout" >
+					<div id="responseHeaderPannel" data-options="region:'center', border:false, split:true,collapsible:false" style="height:40%; padding:10px 20px 10px 10px;">
+					</div>
+					<div id="responsePannel4Detail" class="easyui-tabs" data-options="region:'south', border:false,split:true,collapsible:false" style="height:60%;">
+						<div id="parsed" title="Parsed" data-options="fit:true, border:false, doSize: true" style="padding:10px 20px 10px 10px;">
+						</div>
+						<div id="source" title="Source" data-options="fit:true, border:false" style="padding:10px 20px 10px 10px;">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Switch Window -->
+	    <div id="masterSwtichWindow" class="easyui-window" title="Switch" data-options="closed: true, collapsible: true, minimizable: false, maximizable: false, resizable: false" style="width:150px; height:117px;">
+	    	<div style="margin: 5px;"><b>Mock:</b> <input id="mockButton" class="easyui-switchbutton" data-options="onText:'On',offText:'Off'" checked style="width:65px;" /></div>
+			<div style="margin: 5px;"><b>Https:</b> <input id="httpProxyButton" class="easyui-switchbutton" data-options="onText:'On',offText:'Off'" checked style="width:65px;" /></div>
+	    </div>
+		<!-- Mock Window -->
+	    <div id="mockWindow" class="easyui-window" title="MockList" data-options="closed: true, collapsible: true, minimizable: false, maximizable: false, resizable: false" style="width:400px	; height:70%;">
+		    <table class="easyui-datagrid" id="MockListDataGrid" data-options="onClickRow: mockListDgClickRow, showHeader:false, border:false, method:'get', fit: true, url:'/config/mock/list',fitColumns:true, singleSelect:true">
+			    <thead>
+			        <tr>
+                		<th data-options="field:'ck',checkbox:true, formatter: bindStatus"></th>
+			            <th data-options="field:'id',hidden:true">mockId</th>
+			            <th data-options="field:'name',width:100">MockName</th>
+			            <th data-options="field:'status',hidden:true">status</th>
+				        </tr>
+			    </thead>
+			</table>
+	    </div>
+	</body>
+</html>

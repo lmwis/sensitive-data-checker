@@ -11,9 +11,11 @@ import com.lmwis.datachecker.center.dao.MouseRecordDO;
 import com.lmwis.datachecker.center.dao.MyComputerInfo;
 import com.lmwis.datachecker.center.dao.mapper.MouseRecordMapper;
 import com.lmwis.datachecker.center.pojo.BatchQueryMouseRecordResult;
+import com.lmwis.datachecker.center.pojo.BatchUploadMouseRecordDTO;
 import com.lmwis.datachecker.center.pojo.MouseRecordDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -123,5 +125,18 @@ public class MouseRecordAppServiceImpl implements MouseRecordAppService {
                 .width(computerInfo.getScreenWidth())
                 .height(computerInfo.getScreenHeight())
                 .build();
+    }
+
+    @Override
+    public boolean batchUploadMouseRecord(BatchUploadMouseRecordDTO batchUploadMouseRecordDTO) throws BusinessException {
+        if (batchUploadMouseRecordDTO == null || CollectionUtils.isEmpty(batchUploadMouseRecordDTO.getList())){
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+        }
+        batchUploadMouseRecordDTO.getList().forEach(k->{
+            MouseRecordDO mouseRecordDO = MouseRecordConvert.CONVERT.convertToDO(k);
+            mouseRecordDO.setUid(userContextHolder.getCurrentUid());
+            mouseRecordMapper.insert(mouseRecordDO);
+        });
+        return true;
     }
 }

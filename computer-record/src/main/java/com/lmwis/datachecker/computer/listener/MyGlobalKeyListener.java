@@ -34,7 +34,6 @@ public class MyGlobalKeyListener implements NativeKeyListener {
     }
 
     public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
-        log.info("Key typed: "+ NativeKeyEvent.getKeyText(nativeKeyEvent.getKeyCode()));
         packAndSaveKeyboardObject(nativeKeyEvent, KEYBOARD_ACTION_PRESSED);
     }
 

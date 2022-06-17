@@ -7,9 +7,7 @@ import com.lmwis.datachecker.common.perperties.CommonConfigProperties;
 import com.lmwis.datachecker.computer.dao.MyComputerInfo;
 import com.lmwis.datachecker.computer.dao.mapper.KeyboardRecordDO;
 import com.lmwis.datachecker.computer.dao.mapper.MouseRecordDO;
-import com.lmwis.datachecker.computer.pojo.KeyboardRecordDTO;
-import com.lmwis.datachecker.computer.pojo.MouseRecordDTO;
-import com.lmwis.datachecker.computer.pojo.MyComputerInfoDTO;
+import com.lmwis.datachecker.computer.pojo.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.CharEncoding;
@@ -28,6 +26,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
  * @Description: TODO
@@ -40,11 +39,19 @@ import java.nio.charset.StandardCharsets;
 @AllArgsConstructor
 public class DataCenterClient {
 
-    static final String KEYBOARD_URL = "http://127.0.0.1:9001/keyboardRecord";
+    static final String HOST = "127.0.0.1";
 
-    static final String MOUSE_URL = "http://127.0.0.1:9001/mouseRecord";
+    static final String PORT = "9001";
 
-    static final String COMPUTER_INFO_URL = "http://127.0.0.1:9001/userInfo/computerInfo";
+    static final String KEYBOARD_URL = "/keyboardRecord";
+
+    static final String KEYBOARD_BATCH_URL = "/keyboardRecord/batch";
+
+    static final String MOUSE_URL = "/mouseRecord";
+
+    static final String MOUSE_BATCH_URL = "/mouseRecord/batch";
+
+    static final String COMPUTER_INFO_URL = "/userInfo/computerInfo";
 
     final CommonConfigProperties properties;
     final ObjectMapper objectMapper;
@@ -59,7 +66,7 @@ public class DataCenterClient {
         HttpResponse response = null;
         MyComputerInfo res = null;
         try{
-            HttpPost httpPost = buildHttpPost(COMPUTER_INFO_URL, myComputerInfo);
+            HttpPost httpPost = buildHttpPost(buildUrl(COMPUTER_INFO_URL), myComputerInfo);
             response = httpClient.execute(httpPost);
             // 请求成功
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
@@ -79,7 +86,7 @@ public class DataCenterClient {
         HttpResponse response = null;
         int res = -1;
         try{
-            HttpPost httpPost = buildHttpPost(KEYBOARD_URL, keyboardRecordDTO);
+            HttpPost httpPost = buildHttpPost(buildUrl(KEYBOARD_URL), keyboardRecordDTO);
             response = httpClient.execute(httpPost);
             // 请求成功
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
@@ -96,7 +103,7 @@ public class DataCenterClient {
 
     public KeyboardRecordDO selectKeyboardById(Long id){
         HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpGet httpGet = new HttpGet(this.urlIdAppend(KEYBOARD_URL,id));
+        HttpGet httpGet = new HttpGet(this.urlIdAppend(buildUrl(KEYBOARD_URL),id));
         KeyboardRecordDO keyboardRecordDO = null;
         try {
             HttpResponse response = httpClient.execute(httpGet);
@@ -110,13 +117,59 @@ public class DataCenterClient {
         }
         return keyboardRecordDO;
     }
+    public boolean batchUploadKeyboardRecord(List<KeyboardRecordDTO> keyboardRecordDTOList){
 
+        BatchUploadKeyboardRecordDTO batchUploadKeyboardRecordDTO = new BatchUploadKeyboardRecordDTO();
+
+        batchUploadKeyboardRecordDTO.setList(keyboardRecordDTOList);
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpResponse response = null;
+        boolean res = false;
+        try{
+            HttpPost httpPost = buildHttpPost(buildUrl(KEYBOARD_BATCH_URL), batchUploadKeyboardRecordDTO);
+            response = httpClient.execute(httpPost);
+            // 请求成功
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
+                CommonReturnType commonReturnType = objectMapper.readValue(readResponseBody(response), CommonReturnType.class);
+                if (commonReturnType.getData()!=null){
+                    res = Boolean.parseBoolean(commonReturnType.getData().toString());
+                }
+            }
+        }catch (IOException e){
+            log.error("[batchUploadKeyboardRecord] invoke http error, msg:{}",e.getMessage());
+        }
+        return res;
+    }
+
+    public boolean batchUploadMouseRecord(List<MouseRecordDTO> mouseRecordDTOList){
+
+        BatchUploadMouseRecordDTO batchUploadMouseRecordDTO = new BatchUploadMouseRecordDTO();
+
+        batchUploadMouseRecordDTO.setList(mouseRecordDTOList);
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpResponse response = null;
+        boolean res = false;
+        try{
+            HttpPost httpPost = buildHttpPost(buildUrl(MOUSE_BATCH_URL), batchUploadMouseRecordDTO);
+            response = httpClient.execute(httpPost);
+            // 请求成功
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
+                CommonReturnType commonReturnType = objectMapper.readValue(readResponseBody(response), CommonReturnType.class);
+                if (commonReturnType.getData()!=null){
+                    res = Boolean.parseBoolean(commonReturnType.getData().toString());
+                }
+            }
+        }catch (IOException e){
+            log.error("[batchUploadMouseRecord] invoke http error, msg:{}",e.getMessage());
+        }
+        return res;
+    }
     public int saveMouseRecord(MouseRecordDTO mouseRecordDTO) {
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpResponse response = null;
         int res = -1;
         try{
-            HttpPost httpPost = buildHttpPost(MOUSE_URL, mouseRecordDTO);
+            HttpPost httpPost = buildHttpPost(buildUrl(MOUSE_URL), mouseRecordDTO);
             response = httpClient.execute(httpPost);
             // 请求成功
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
@@ -133,7 +186,7 @@ public class DataCenterClient {
 
     public MouseRecordDO selectMouseRecordById(Long id) {
         HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpGet httpGet = new HttpGet(this.urlIdAppend(KEYBOARD_URL,id));
+        HttpGet httpGet = new HttpGet(this.urlIdAppend(buildUrl(KEYBOARD_URL),id));
         MouseRecordDO mouseRecordDO = null;
         try {
             HttpResponse response = httpClient.execute(httpGet);
@@ -186,5 +239,9 @@ public class DataCenterClient {
         // 将请求实体设置到httpPost对象中
         httpPost.setEntity(stringEntity);
         return httpPost;
+    }
+
+    private String buildUrl(String uri){
+        return "http://"+HOST+":"+PORT+uri;
     }
 }

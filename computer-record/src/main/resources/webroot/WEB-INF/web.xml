@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	id="WebApp_ID" version="3.0">
+	<!-- pipe list -->
+	<servlet>
+		<servlet-name>pipeListServelet</servlet-name>
+		<servlet-class>org.hum.jmitm.console.http.servlet.pipe.PipeListServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>pipeListServelet</servlet-name>
+		<url-pattern>/pipe/list</url-pattern>
+	</servlet-mapping>
+	<!-- pipe detail -->
+	<servlet>
+		<servlet-name>pipeDetailServlet</servlet-name>
+		<servlet-class>org.hum.jmitm.console.http.servlet.pipe.PipeDetailServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>pipeDetailServlet</servlet-name>
+		<url-pattern>/pipe/get</url-pattern>
+	</servlet-mapping>
+	<!-- session list -->
+	<servlet>
+		<servlet-name>SessionListServlet</servlet-name>
+		<servlet-class>org.hum.jmitm.console.http.servlet.session.SessionListServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SessionListServlet</servlet-name>
+		<url-pattern>/session/list</url-pattern>
+	</servlet-mapping>
+	<!-- session detail -->
+	<servlet>
+		<servlet-name>SessionDetailServlet</servlet-name>
+		<servlet-class>org.hum.jmitm.console.http.servlet.session.SessionDetailServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SessionDetailServlet</servlet-name>
+		<url-pattern>/session/get</url-pattern>
+	</servlet-mapping>
+	<!-- download_cert -->
+	<servlet>
+		<servlet-name>certDownloadServlet</servlet-name>
+		<servlet-class>org.hum.jmitm.console.http.servlet.CertDownloadServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>certDownloadServlet</servlet-name>
+		<url-pattern>/c/d</url-pattern>
+	</servlet-mapping>
+	<!-- clear all -->
+	<servlet>
+		<servlet-name>SessionClearServlet</servlet-name>
+		<servlet-class>org.hum.jmitm.console.http.servlet.session.SessionClearServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SessionClearServlet</servlet-name>
+		<url-pattern>/session/clear</url-pattern>
+	</servlet-mapping>
+	<!-- clear all -->
+	<servlet>
+		<servlet-name>GetHttpRequest</servlet-name>
+		<servlet-class>org.hum.jmitm.console.http.servlet.session.CopyHttpRequestServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>GetHttpRequest</servlet-name>
+		<url-pattern>/session/getHttpRequest</url-pattern>
+	</servlet-mapping>
+	<!-- rebuild -->
+	<servlet>
+		<servlet-name>SessionRebuildServlet</servlet-name>
+		<servlet-class>org.hum.jmitm.console.http.servlet.session.SessionRebuildServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SessionRebuildServlet</servlet-name>
+		<url-pattern>/session/rebuild</url-pattern>
+	</servlet-mapping>
+	<!-- resend -->
+	<servlet>
+		<servlet-name>SendRequestServlet</servlet-name>
+		<servlet-class>org.hum.jmitm.console.http.servlet.session.SendRequestServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>SendRequestServlet</servlet-name>
+		<url-pattern>/session/sendRequest</url-pattern>
+	</servlet-mapping>
+	<!-- mock switch -->
+	<servlet>
+		<servlet-name>MockMasterSwitchServlet</servlet-name>
+		<servlet-class>org.hum.jmitm.console.http.servlet.config.MockMasterSwitchServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MockMasterSwitchServlet</servlet-name>
+		<url-pattern>/config/mock_update</url-pattern>
+	</servlet-mapping>
+	<!-- https_proxy switch -->
+	<servlet>
+		<servlet-name>HttpsProxySwitchServlet</servlet-name>
+		<servlet-class>org.hum.jmitm.console.http.servlet.config.HttpsProxySwitchServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>HttpsProxySwitchServlet</servlet-name>
+		<url-pattern>/config/https_proxy_update</url-pattern>
+	</servlet-mapping>
+	<!-- config query -->
+	<servlet>
+		<servlet-name>ConsoleConfigQueryServlet</servlet-name>
+		<servlet-class>org.hum.jmitm.console.http.servlet.config.ConsoleConfigQueryServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ConsoleConfigQueryServlet</servlet-name>
+		<url-pattern>/config/get</url-pattern>
+	</servlet-mapping>
+	<!-- query mock list -->
+	<servlet>
+		<servlet-name>MockListQueryServlet</servlet-name>
+		<servlet-class>org.hum.jmitm.console.http.servlet.config.MockListQueryServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MockListQueryServlet</servlet-name>
+		<url-pattern>/config/mock/list</url-pattern>
+	</servlet-mapping>
+	<!-- query mock list -->
+	<servlet>
+		<servlet-name>MockUpdatorServlet</servlet-name>
+		<servlet-class>org.hum.jmitm.console.http.servlet.config.MockUpdatorServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>MockUpdatorServlet</servlet-name>
+		<url-pattern>/config/mock/update</url-pattern>
+	</servlet-mapping>
+	
+	<welcome-file-list> 
+		<welcome-file>index.html</welcome-file> 
+   </welcome-file-list> 
+</web-app>

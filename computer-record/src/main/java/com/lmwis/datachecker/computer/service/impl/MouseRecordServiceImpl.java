@@ -1,6 +1,6 @@
 package com.lmwis.datachecker.computer.service.impl;
 
-import com.lmwis.datachecker.computer.client.DataCenterClient;
+import com.lmwis.datachecker.computer.client.DataStore;
 import com.lmwis.datachecker.computer.pojo.MouseRecordDTO;
 import com.lmwis.datachecker.computer.service.MouseRecordService;
 import lombok.extern.slf4j.Slf4j;
@@ -19,14 +19,14 @@ import java.util.List;
 @Slf4j
 public class MouseRecordServiceImpl implements MouseRecordService {
 
-    private final DataCenterClient dataCenterClient;
+    final DataStore dataStore;
 
     private final List<MouseRecordDTO> lists = new ArrayList<>();
 
     private final double threshold = 20;
 
-    public MouseRecordServiceImpl(DataCenterClient dataCenterClient) {
-        this.dataCenterClient = dataCenterClient;
+    public MouseRecordServiceImpl(DataStore dataStore) {
+        this.dataStore = dataStore;
     }
 
     public void insertRecordByTemp(MouseRecordDTO mouseRecord) {
@@ -43,7 +43,8 @@ public class MouseRecordServiceImpl implements MouseRecordService {
         int insert = 0;
         try {
             for (MouseRecordDTO k : o) {
-                insert += dataCenterClient.saveMouseRecord(k);
+//                insert += dataCenterClient.saveMouseRecord(k);
+                dataStore.saveMouseRecord(k);
             }
         } catch (Exception e) {
             log.error("数据库写入失败：" + e.getMessage());

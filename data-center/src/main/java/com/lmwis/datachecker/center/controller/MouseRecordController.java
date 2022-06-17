@@ -6,9 +6,11 @@ import com.fehead.lang.error.EmBusinessError;
 import com.fehead.lang.response.CommonReturnType;
 import com.fehead.lang.response.FeheadResponse;
 import com.lmwis.datachecker.center.app.MouseRecordAppService;
+import com.lmwis.datachecker.center.pojo.BatchUploadMouseRecordDTO;
 import com.lmwis.datachecker.center.pojo.MouseRecordDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -35,6 +37,15 @@ public class MouseRecordController extends BaseController {
         return CommonReturnType.create(mouseRecordAppService.insertRecordByTemp(mouseRecordDTO));
     }
 
+    @PostMapping(value = "/batch",produces = MediaType.APPLICATION_JSON_VALUE)
+    public FeheadResponse batchUploadMouseRecord(@RequestBody BatchUploadMouseRecordDTO batchUploadMouseRecordDTO) throws BusinessException {
+
+        if (!validateNull(batchUploadMouseRecordDTO)){
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+        }
+//        log.info("[saveKeyboardRecord] receive data:{}", keyboardRecordDTO);
+        return CommonReturnType.create(mouseRecordAppService.batchUploadMouseRecord(batchUploadMouseRecordDTO));
+    }
     @GetMapping("/{id}")
     public FeheadResponse selectMouseById(@PathVariable Long id) throws BusinessException {
         if (!validateNull(id)){
