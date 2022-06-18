@@ -7,17 +7,16 @@ import lombok.ToString;
 /**
  * @Description: TODO
  * @Author: lmwis
- * @Data: 2022/5/29 7:37 上午
+ * @Data: 2022/6/16 3:51 下午
  * @Version: 1.0
  */
 @Data
 @ToString
 @Builder
-public class DashboardInitResult {
+public class NetInfoDTO {
 
-    String keyboardLast;
-    String locationName;
-    String appLast;
-    long uploadLast;
+    private RequestInfoDTO request;
+
+    private ResponseInfoDTO response;
 
 }

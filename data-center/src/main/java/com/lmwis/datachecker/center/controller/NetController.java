@@ -1,12 +1,13 @@
 package com.lmwis.datachecker.center.controller;
 
 import com.fehead.lang.controller.BaseController;
+import com.fehead.lang.error.BusinessException;
+import com.fehead.lang.error.EmBusinessError;
 import com.fehead.lang.response.CommonReturnType;
+import com.lmwis.datachecker.center.app.NetInfoAppService;
 import com.lmwis.datachecker.center.pojo.BatchUploadNetInfoDTO;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @Description: TODO
@@ -16,11 +17,25 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/net")
+@RequiredArgsConstructor
 public class NetController extends BaseController {
 
-    @PostMapping("/batch")
-    public CommonReturnType batchUploadNetInfo(@RequestBody BatchUploadNetInfoDTO batchUploadNetInfoDTO){
+    final NetInfoAppService netInfoAppService;
 
-        return CommonReturnType.create("");
+    @PostMapping("/batch")
+    public CommonReturnType batchUploadNetInfo(@RequestBody BatchUploadNetInfoDTO batchUploadNetInfoDTO) throws BusinessException {
+
+        if (!validateNull(batchUploadNetInfoDTO)){
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+        }
+        return CommonReturnType.create(netInfoAppService.batchUploadNetInfo(batchUploadNetInfoDTO));
+    }
+
+    @GetMapping("/query")
+    public CommonReturnType batchQueryMouseRecordRangTime(long startTime, long endTime) throws BusinessException {
+        if (!validateNull(startTime,endTime)){
+            throw new BusinessException(EmBusinessError.PARAMETER_VALIDATION_ERROR);
+        }
+        return CommonReturnType.create(netInfoAppService.batchQueryNetInfoRangTime(startTime,endTime));
     }
 }

@@ -1,6 +1,5 @@
-package com.lmwis.datachecker.computer.timer;
+package com.lmwis.datachecker.computer.client;
 
-import com.lmwis.datachecker.computer.client.DataStore;
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,8 +22,8 @@ public class UploadTimer {
         final long timeInterval = 5000;
         new Thread(() -> {
             while (true) {
-//                dataStore.flush();
                 try {
+                    dataStore.flush();
                     Thread.sleep(timeInterval);
                 } catch (InterruptedException e) {
                     e.printStackTrace();

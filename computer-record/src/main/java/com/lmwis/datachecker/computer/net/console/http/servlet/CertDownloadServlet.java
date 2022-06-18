@@ -21,7 +21,7 @@ public class CertDownloadServlet extends HttpServlet {
 	
 	public CertDownloadServlet() {
 		try {
-			File certFile = new File(CertDownloadServlet.class.getResource("/cert/client.cer").getFile());
+			File certFile = new File(CertDownloadServlet.class.getResource("/static/cert/client.cer").getFile());
 			InputStream is = new FileInputStream(certFile);
 			CERT_ARRAY = new byte[(int) certFile.length()];
 			is.read(CERT_ARRAY);

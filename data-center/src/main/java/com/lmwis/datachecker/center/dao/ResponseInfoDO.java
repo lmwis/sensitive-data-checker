@@ -22,6 +22,8 @@ public class ResponseInfoDO {
     @TableId(type = IdType.AUTO)
     Long id;
 
+    Long uid;
+
     Long requestInfoId;
 
     String httpVersion;
@@ -32,7 +34,9 @@ public class ResponseInfoDO {
 
     String content;
 
+    String sourceContent;
+
     Date gmtCreate;
 
-    Date gmtModify;
+    Date gmtModified;
 }

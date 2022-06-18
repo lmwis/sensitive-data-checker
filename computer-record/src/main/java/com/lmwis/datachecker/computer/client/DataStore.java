@@ -49,6 +49,7 @@ public class DataStore {
     }
     public void saveNetInfo(List<NetInfoDTO> netInfoDTOList){
         if (CollectionUtils.isNotEmpty(netInfoDTOList)){
+            log.info("[saveNetInfo] 保存网络数据，数量：{}" ,netInfoDTOList.size() );
             netInfoDTOStore.addAll(netInfoDTOList);
         }
     }
@@ -59,8 +60,10 @@ public class DataStore {
 
         log.info("[flush] 开始保存键盘数据 数量：{}", currentKeyboard.size());
         try{
-            if(dataCenterClient.batchUploadKeyboardRecord(currentKeyboard)){
-                keyboardRecordDTOStore.removeAll(currentKeyboard);
+            if (currentKeyboard.size()>0){
+                if(dataCenterClient.batchUploadKeyboardRecord(currentKeyboard)){
+                    keyboardRecordDTOStore.removeAll(currentKeyboard);
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -71,18 +74,22 @@ public class DataStore {
         List<MouseRecordDTO> currentMouse = new ArrayList<>(mouseRecordDTOStore);
         log.info("[flush] 开始保存鼠标数据 数量：{}", currentMouse.size());
         try{
-            if (dataCenterClient.batchUploadMouseRecord(currentMouse)){
-                mouseRecordDTOStore.removeAll(currentMouse);
+            if (currentMouse.size()>0){
+                if (dataCenterClient.batchUploadMouseRecord(currentMouse)){
+                    mouseRecordDTOStore.removeAll(currentMouse);
+                }
             }
         }catch (Exception e){
             e.printStackTrace();
         }
 
         List<NetInfoDTO> currentNet = new ArrayList<>(netInfoDTOStore);
-        log.info("[flush] 开始保存网络数据数据 数量：{}", currentMouse.size());
+        log.info("[flush] 开始保存网络数据数据 数量：{}", currentNet.size());
         try{
-            if (dataCenterClient.batchUploadMouseRecord(currentMouse)){
-                netInfoDTOStore.removeAll(currentNet);
+            if (currentNet.size()>0){
+                if (dataCenterClient.batchUploadNetInfo(currentNet)){
+                    netInfoDTOStore.removeAll(currentNet);
+                }
             }
         }catch (Exception e){
             e.printStackTrace();

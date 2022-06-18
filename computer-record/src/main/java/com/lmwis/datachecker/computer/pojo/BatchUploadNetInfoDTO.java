@@ -1,18 +1,16 @@
-package com.lmwis.datachecker.center.pojo;
+package com.lmwis.datachecker.computer.pojo;
 
 import lombok.Data;
-import lombok.ToString;
 
 import java.util.List;
 
 /**
  * @Description: TODO
  * @Author: lmwis
- * @Data: 2022/5/20 6:28 下午
+ * @Data: 2022/6/16 9:54 下午
  * @Version: 1.0
  */
 @Data
-@ToString
 public class BatchUploadNetInfoDTO {
 
     List<NetInfoDTO> list;

@@ -42,7 +42,6 @@ public class JmitmServerProvider {
 		ChannelFuture proxyStartFuture = proxyServer.start();
 		if (consoleServer != null) {
 			try {
-				// 不启动jetty
 				consoleServer.startJetty();
 			} catch (Exception e) {
 				log.error("console-server start error", e);

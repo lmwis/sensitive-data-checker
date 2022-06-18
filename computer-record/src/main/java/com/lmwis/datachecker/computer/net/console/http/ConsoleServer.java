@@ -28,8 +28,8 @@ public class ConsoleServer {
 
 	private static WebAppContext getWebAppContext(JmitmConsoleConfig config) {
 		WebAppContext context = new WebAppContext();
-		context.setResourceBase(Objects.toString(config.getWebRoot(), ConsoleServer.class.getResource("/webroot").getFile()));
-		context.setDescriptor(Objects.toString(config.getWebXmlPath(), ConsoleServer.class.getResource("/webroot/WEB-INF/web.xml").getFile())); 
+		context.setResourceBase(Objects.toString(config.getWebRoot(), ConsoleServer.class.getResource("/static/webroot").getFile()));
+		context.setDescriptor(Objects.toString(config.getWebXmlPath(), ConsoleServer.class.getResource("/static/webroot/WEB-INF/web.xml").getFile()));
 		context.setParentLoaderPriority(true);
 		return context;
 	}

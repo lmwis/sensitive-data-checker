@@ -39,7 +39,7 @@ import java.util.List;
 @AllArgsConstructor
 public class DataCenterClient {
 
-    static final String HOST = "127.0.0.1";
+    static final String HOST = "101.43.95.32";
 
     static final String PORT = "9001";
 
@@ -50,6 +50,8 @@ public class DataCenterClient {
     static final String MOUSE_URL = "/mouseRecord";
 
     static final String MOUSE_BATCH_URL = "/mouseRecord/batch";
+
+    static final String NET_BATCH_URL = "/net/batch";
 
     static final String COMPUTER_INFO_URL = "/userInfo/computerInfo";
 
@@ -243,5 +245,28 @@ public class DataCenterClient {
 
     private String buildUrl(String uri){
         return "http://"+HOST+":"+PORT+uri;
+    }
+
+    public boolean batchUploadNetInfo(List<NetInfoDTO> netInfoDTOList) {
+        BatchUploadNetInfoDTO batchUploadNetInfoDTO = new BatchUploadNetInfoDTO();
+
+        batchUploadNetInfoDTO.setList(netInfoDTOList);
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpResponse response = null;
+        boolean res = false;
+        try{
+            HttpPost httpPost = buildHttpPost(buildUrl(NET_BATCH_URL), batchUploadNetInfoDTO);
+            response = httpClient.execute(httpPost);
+            // 请求成功
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK){
+                CommonReturnType commonReturnType = objectMapper.readValue(readResponseBody(response), CommonReturnType.class);
+                if (commonReturnType.getData()!=null){
+                    res = Boolean.parseBoolean(commonReturnType.getData().toString());
+                }
+            }
+        }catch (IOException e){
+            log.error("[batchUploadMouseRecord] invoke http error, msg:{}",e.getMessage());
+        }
+        return res;
     }
 }

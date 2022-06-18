@@ -117,6 +117,7 @@ public class MouseRecordAppServiceImpl implements MouseRecordAppService {
         QueryWrapper<MouseRecordDO> queryWrapper = new QueryWrapper<>();
         queryWrapper.between("gmt_create",new Date(startTime), new Date(endTime));
         queryWrapper.orderByAsc("gmt_create");
+        queryWrapper.eq("uid",userContextHolder.getCurrentUid());
         List<MouseRecordDTO> list =  mouseRecordMapper.selectList(queryWrapper).stream()
                 .map(MouseRecordConvert.CONVERT::convertToDTO).collect(Collectors.toList());
         MyComputerInfo computerInfo = userInfoAppService.selectUserComputerInfo(userContextHolder.getCurrentUid());

@@ -32,7 +32,7 @@ public class CA_Creator implements Callable<byte[]> {
 	private static final String CERT_ALIAS = "wire_tiger";
 	private static final String CA_ALIAS = "1";
 	private static final String CA_PASS = "wiretiger@123";
-	private static final String CA_FILE = CA_Station.class.getResource("/cert/server.p12").getFile();
+	private static final String CA_FILE = CA_Station.class.getResource("/static/cert/server.p12").getFile();
 	static {
 		try {
 			Security.addProvider(new BouncyCastleProvider());

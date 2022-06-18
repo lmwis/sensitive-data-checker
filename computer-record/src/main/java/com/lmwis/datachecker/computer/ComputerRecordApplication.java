@@ -14,7 +14,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @Version: 1.0
  */
 @SpringBootApplication
-@ComponentScan({"com.lmwis.datachecker.*","com.fehead.lang.*"})
+@ComponentScan({"com.lmwis.datachecker.**","com.fehead.lang.*"})
 @MapperScan("com.lmwis.datachecker.computer.dao.mapper")
 @EnableScheduling
 public class ComputerRecordApplication {

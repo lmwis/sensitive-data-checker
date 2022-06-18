@@ -45,13 +45,15 @@ public class DashboardController {
 
     final ProcessUsageAppService processUsageAppService;
 
+    final NetInfoAppService netInfoAppService;
+
 
     @GetMapping("/init")
     public CommonReturnType getDashboardInitData(){
         LocationInfoDO locationInfoDO = locationInfoAppService.selectLastDO();
         return CommonReturnType.create(DashboardInitResult.builder()
                 .keyboardLast(keyboardRecordAppService.selectLastDO().getKeyText())
-                .locationLast(locationInfoDO.getLongitude()+","+locationInfoDO.getLatitude())
+                .locationName(locationInfoAppService.selectLocationName(locationInfoDO.getLongitude(),locationInfoDO.getLatitude()))
                 .appLast(appBaseAppService.selectById(appUsageService.selectLastDO().getAppId()).getName())
                 .uploadLast(System.currentTimeMillis()).build());
     }
@@ -70,6 +72,7 @@ public class DashboardController {
                 .postureCount(days.stream().map(iphonePostureAppService::queryCountADay).collect(Collectors.toList()))
                 .actionCount(days.stream().map(iphoneActionAppService::queryCountADay).collect(Collectors.toList()))
                 .pcAppCount(days.stream().map(processUsageAppService::queryCountADay).collect(Collectors.toList()))
+                .netCount(days.stream().map(netInfoAppService::queryCountADay).collect(Collectors.toList()))
         .build());
     }
     private List<String> queryLast7DayString(){

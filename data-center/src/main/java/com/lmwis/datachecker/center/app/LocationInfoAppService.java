@@ -24,6 +24,8 @@ public interface LocationInfoAppService {
 
     LocationInfoDO selectLastDO();
 
+    String selectLocationName(String longitude, String latitude);
+
     int queryCountADay(String day);
 
     boolean batchUploadIphonePosture(BatchUploadLocationDTO batchUploadLocationDTO) throws BusinessException;

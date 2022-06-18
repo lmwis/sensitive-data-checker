@@ -22,6 +22,8 @@ public class RequestInfoDO {
     @TableId(type = IdType.AUTO)
     Long id;
 
+    Long uid;
+
     String url;
 
     String hostname;
@@ -36,8 +38,10 @@ public class RequestInfoDO {
 
     String content;
 
+    String sourceContent;
+
     Date gmtCreate;
 
-    Date gmtModify;
+    Date gmtModified;
 
 }

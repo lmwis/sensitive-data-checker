@@ -62,7 +62,7 @@ public class AppBaseAppServiceImpl implements AppBaseAppService {
                     appBaseDOMapper.updateById(exitAppBase);
                 }
                 if (!StringUtils.equals(exitAppBase.getVersion(),l.getVersion())){
-                    // 更新图片url
+                    // 更新version
                     exitAppBase.setVersion(l.getVersion());
                     appBaseDOMapper.updateById(exitAppBase);
                 }

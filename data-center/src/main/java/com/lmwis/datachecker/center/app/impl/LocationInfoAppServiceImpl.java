@@ -1,5 +1,6 @@
 package com.lmwis.datachecker.center.app.impl;
 
+import cn.hutool.http.HttpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fehead.lang.error.BusinessException;
 import com.fehead.lang.error.EmBusinessError;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -84,6 +86,15 @@ public class LocationInfoAppServiceImpl implements LocationInfoAppService {
         queryWrapper.last("limit 1");
         queryWrapper.orderByDesc("gmt_create");
         return locationInfoMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public String selectLocationName(String longitude, String latitude) {
+        HashMap<String, Object> paramMap = new HashMap<>();
+        paramMap.put("key", "b1110c90a30f5b5a3e21152c42b4ba44");
+        paramMap.put("location", longitude+","+latitude);
+        String result= HttpUtil.get("https://restapi.amap.com/v3/geocode/regeo",paramMap);
+        return result;
     }
 
     @Override
