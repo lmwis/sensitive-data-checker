@@ -40,6 +40,7 @@ import java.util.List;
 public class DataCenterClient {
 
     static final String HOST = "101.43.95.32";
+//    static final String HOST = "127.0.0.1";
 
     static final String PORT = "9001";
 

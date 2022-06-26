@@ -5,7 +5,6 @@ import com.lmwis.datachecker.center.app.NetInfoAppService;
 import com.lmwis.datachecker.center.compoment.UserContextHolder;
 import com.lmwis.datachecker.center.convert.RequestInfoConvert;
 import com.lmwis.datachecker.center.convert.ResponseInfoConvert;
-import com.lmwis.datachecker.center.dao.IphonePostureDO;
 import com.lmwis.datachecker.center.dao.RequestInfoDO;
 import com.lmwis.datachecker.center.dao.ResponseInfoDO;
 import com.lmwis.datachecker.center.dao.mapper.RequestInfoDOMapper;
@@ -72,7 +71,9 @@ public class NetInfoAppServiceImpl implements NetInfoAppService {
             queryResponse.eq("uid",userContextHolder.getCurrentUid());
             queryResponse.eq("request_info_id",k.getId());
             ResponseInfoDO responseInfoDO = responseInfoDOMapper.selectOne(queryResponse);
-            list.add(resolveNetInfoResult(k,responseInfoDO));
+            if (responseInfoDO != null){
+                list.add(resolveNetInfoResult(k,responseInfoDO));
+            }
         });
 
         return BatchQueryNetInfoResult.builder()

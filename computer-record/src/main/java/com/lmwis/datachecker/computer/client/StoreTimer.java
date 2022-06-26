@@ -1,6 +1,8 @@
 package com.lmwis.datachecker.computer.client;
 
 import com.lmwis.datachecker.computer.net.console.common.chain.SessionManagerInvokeChain;
+import com.lmwis.datachecker.computer.net.console.http.service.SessionService;
+import com.lmwis.datachecker.computer.net.console.http.vo.JmitmSessionDetailVO;
 import com.lmwis.datachecker.computer.pojo.NetInfoDTO;
 import com.lmwis.datachecker.computer.pojo.RequestInfoDTO;
 import com.lmwis.datachecker.computer.pojo.ResponseInfoDTO;
@@ -26,6 +28,8 @@ public class StoreTimer {
 
     final DataStore dataStore;
 
+    private final SessionService sessionService = new SessionService();
+
     public StoreTimer(DataStore dataStore) {
         this.dataStore = dataStore;
         initTimer();
@@ -43,14 +47,20 @@ public class StoreTimer {
                             .filter(k-> k.getRequestTime()> lastTime[0])
                             .filter(k-> k.getRequest()!=null && k.getResponse()!=null)
                             .forEach(k->{
+                                JmitmSessionDetailVO byId = sessionService.getById(k.getId());
                                 RequestInfoDTO requestInfoDTO = convertRequestInfo(k.getRequest());
                                 requestInfoDTO.setGmtCreate(k.getRequestTime());
                                 requestInfoDTO.setGmtModified(k.getRequestTime());
-                                requestInfoDTO.setSourceContent(Arrays.toString(k.getRequestBytes()));
+                                if (k.getRequestBytes() != null){
+                                    requestInfoDTO.setContent(byId.getRequestBody4Parsed());
+                                }
                                 ResponseInfoDTO responseInfoDTO = convertHttpResponse(k.getResponse(), requestInfoDTO);
                                 responseInfoDTO.setGmtCreate(k.getResponseTime());
                                 responseInfoDTO.setGmtModified(k.getResponseTime());
-                                responseInfoDTO.setSourceContent(Arrays.toString(k.getResponseBytes()));
+//                                responseInfoDTO.setSourceContent(Arrays.toString(k.getResponseBytes()));
+                                if (k.getResponseBytes() !=null){
+                                    responseInfoDTO.setContent(byId.getResponseBody4Parsed());
+                                }
                                 NetInfoDTO netInfoDTO = NetInfoDTO.builder()
                                         .request(requestInfoDTO)
                                         .response(responseInfoDTO).build();
@@ -60,7 +70,10 @@ public class StoreTimer {
                         lastTime[0] = netInfoDTOList.get(netInfoDTOList.size()-1).getRequest().getGmtCreate();
                         dataStore.saveNetInfo(netInfoDTOList);
                     }
-
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                try {
                     Thread.sleep(timeInterval);
                 } catch (InterruptedException e) {
                     e.printStackTrace();

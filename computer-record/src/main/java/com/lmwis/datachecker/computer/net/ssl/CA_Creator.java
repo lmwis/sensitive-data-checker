@@ -1,5 +1,6 @@
 package com.lmwis.datachecker.computer.net.ssl;
 
+import com.lmwis.datachecker.computer.init.ResourceRenderer;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Primitive;
@@ -32,7 +33,8 @@ public class CA_Creator implements Callable<byte[]> {
 	private static final String CERT_ALIAS = "wire_tiger";
 	private static final String CA_ALIAS = "1";
 	private static final String CA_PASS = "wiretiger@123";
-	private static final String CA_FILE = CA_Station.class.getResource("/static/cert/server.p12").getFile();
+//	private static final String CA_FILE = CA_Station.class.getResource("/static/cert/server.p12").getFile();
+//private static final String CA_FILE = ResourceRenderer.resourceLoader("classpath:static/cert/server.p12");
 	static {
 		try {
 			Security.addProvider(new BouncyCastleProvider());
@@ -51,8 +53,10 @@ public class CA_Creator implements Callable<byte[]> {
 	private static byte[] _create(String domain) throws Exception {
 		// 读取CA证书的JKS文件
 		KeyStore caStore = KeyStore.getInstance("PKCS12");
-		File caFile = new File(CA_FILE);
-		caStore.load(new FileInputStream(caFile), CA_PASS.toCharArray());
+//		File caFile = new File(CA_FILE);
+
+		caStore.load(ResourceRenderer.resourceLoader("classpath:static/cert/server.p12"), CA_PASS.toCharArray());
+//		caStore.load(new FileInputStream(caFile), CA_PASS.toCharArray());
 
 		// 给alice签发证书并存为server_cert.p12的文件
 		PrivateKeyEntry caPrivateKey = (PrivateKeyEntry) caStore.getEntry(CA_ALIAS, new PasswordProtection(CA_PASS.toCharArray()));
